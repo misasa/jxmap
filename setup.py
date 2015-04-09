@@ -1,10 +1,12 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.0.1'
+from jxmap import __version__ as VERSION
+
+#version = '0.0.1'
 
 setup(name='jxmap',
-      version=version,
+      version=VERSION,
       description="JEOL X-ray Map",
       long_description="""\
 JEOL X-ray Map""",
@@ -17,10 +19,14 @@ JEOL X-ray Map""",
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
+      test_suite='nose.collector',
+      tests_require=['Nose'],
       install_requires=[
           # -*- Extra requirements: -*-
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
+      entry_points= {
+            "console_scripts": [
+                  "map2tiff = jxmap.commands:map2tiff",
+                  "map2raw = jxmap.commands:map2raw",
+                  ]},
       )

@@ -28,5 +28,6 @@ JEOL X-ray Map""",
             "console_scripts": [
                   "map2tiff = jxmap.commands:map2tiff",
                   "map2raw = jxmap.commands:map2raw",
+                  "map2jpeg = jxmap.commands:map2jpeg",
                   ]},
       )

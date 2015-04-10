@@ -3,7 +3,6 @@ import sys, os
 
 from jxmap import __version__ as VERSION
 
-#version = '0.0.1'
 
 setup(name='jxmap',
       version=VERSION,

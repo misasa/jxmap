@@ -3,7 +3,7 @@ import os
 import numpy
 import shutil
 from nose.tools import *
-from jxmap.commands import _dtype, _read_map, _parse_options, map2tiff, map2raw, map2jpeg
+from jxmap.commands import _get_rpl_text, _dtype, _read_map, _parse_options, map2tiff, map2raw, map2jpeg
 
 saved = None
 
@@ -28,19 +28,20 @@ def teardown():
 
 @with_setup(setup, teardown)
 def test_options():
-	sys.argv = ['map2tiff', '--swap-byte', '--offset', '32']
+	sys.argv = ['map2tiff', '--swap-byte', '--offset', '32', '--geometry', '920x1000']
 	options, args = _parse_options()
 	assert_equals(options.swap_byte, True)
 	assert_equals(options.offset, 32)
+	assert_equals(options.step_numbers, (920,1000))
 
 @with_setup(setup, teardown)
 def test_read_map():
-	imgArray1 = _read_map(mapfile, 920, 1000, swap_byte = True)
-#	assert_equals(imgArray1.shape, (920, 1000))
+	imgArray1 = _read_map(mapfile, x_step_number = 920, y_step_number =1000, swap_byte = True)
+	assert_equals(imgArray1.shape, (1000, 920))
 	assert_equals(numpy.amax(imgArray1), 1005)
 
-	imgArray2 = _read_map(mapfile2, 1800, 1600)
-#	assert_equals(imgArray2.shape, (1800, 1600))
+	imgArray2 = _read_map(mapfile2, x_step_number = 1800, y_step_number = 1600)
+	assert_equals(imgArray2.shape, (1600, 1800))
 	assert_equals(numpy.amax(imgArray2), 67.0)
 
 def test_dtype():
@@ -50,21 +51,51 @@ def test_dtype():
 	assert_raises(RuntimeError, _dtype, 1)
 	assert_raises(RuntimeError, _dtype, 9)
 
-@with_setup(setup, teardown)
-def test_map2tiff():
-	sys.argv = ['map2tiff', '--swap-byte', mapfile, '920', '1000']
-	map2tiff()
+def test_get_rpl_text():
+	x_step_number = 920
+	y_step_number = 1000
+	imgArray = numpy.zeros((y_step_number, x_step_number), dtype=numpy.uint16)
+	rpl = _get_rpl_text(imgArray)
+	print "\n"
+	print "+"*10
+	print rpl
+	imgArray = numpy.zeros((y_step_number, x_step_number), dtype=numpy.uint32)
+	rpl = _get_rpl_text(imgArray)
+	print "\n"
+	print "+"*10
+	print rpl
+	imgArray = numpy.zeros((y_step_number, x_step_number), dtype=numpy.float64)
+	rpl = _get_rpl_text(imgArray)
+	print "\n"
+	print "+"*10
+	print rpl
+	imgArray = numpy.zeros((y_step_number, x_step_number), dtype=numpy.uint8)
+	rpl = _get_rpl_text(imgArray)
+	print "\n"
+	print "+"*10
+	print rpl
 
-@with_setup(setup, teardown)
-def test_map2jpeg():
-	sys.argv = ['map2jpeg', '--swap-byte', mapfile, '920', '1000']
-	map2jpeg()
 
-@with_setup(setup, teardown)
-def test_map2tiff_with_offset():
-	sys.argv = ['map2tiff', '--swap-byte', mapfile, '920', '1000']
-	map2tiff()
+
+# @with_setup(setup, teardown)
+# def test_map2tiff():
+# 	sys.argv = ['map2tiff', '--swap-byte', mapfile, '920', '1000']
+# 	map2tiff()
+
+# @with_setup(setup, teardown)
+# def test_map2jpeg():
+# 	sys.argv = ['map2jpeg', '--swap-byte', mapfile, '920', '1000']
+# 	map2jpeg()
+
+# @with_setup(setup, teardown)
+# def test_map2tiff_with_offset():
+# 	sys.argv = ['map2tiff', '--swap-byte', mapfile, '920', '1000']
+# 	map2tiff()
 # @with_setup(setup, teardown)
 # def test_map2raw():
 # 	sys.argv = ['map2raw', '--swap-byte', mapfile, '920', '1000']
 # 	map2raw()
+@with_setup(setup, teardown)
+def test_map2raw():
+	sys.argv = ['map2raw', mapfile2, '--geometry', '1800x1600']
+	map2raw()

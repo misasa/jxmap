@@ -140,6 +140,7 @@ def test_read_map_003():
 
 @with_setup(setup, teardown)
 def test_map2iamge_jpeg():
+	os.mkdir('tmp/jpeg')
 	shutil.copy(os.path.join(files_dir, 'data003.map'),'tmp')	
 	shutil.copy(os.path.join(files_dir, 'data003.cnd'),'tmp')	
 	sys.argv = ['map2jpeg', 'tmp/data003.map', 'tmp/jpeg/data003.jpeg']
@@ -147,9 +148,10 @@ def test_map2iamge_jpeg():
 	assert_true(os.path.exists('tmp/jpeg/data003.jpeg'))
 
 def test_map2image_raw():
+	os.mkdir('tmp/raw')
 	shutil.copy(os.path.join(files_dir, 'data003.map'),'tmp')	
 	shutil.copy(os.path.join(files_dir, 'data003.cnd'),'tmp')	
-	sys.argv = ['map2raw', 'tmp/data003.map', 'tmp/raw/data003.raw']
+	sys.argv = ['map2raw', 'tmp/data003.map', os.path.abspath('tmp/raw/data003.raw')]
 	map2image()
 	assert_true(os.path.exists('tmp/raw/data003.raw'))
 	assert_true(os.path.exists('tmp/raw/data003.rpl'))

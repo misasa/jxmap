@@ -168,8 +168,6 @@ def _read_condition(path, **options):
 	else:
 		cnd_path = _cnd_path(path)
 		cnd_path_0 = _cnd_path_0(path)
-		print cnd_path
-		print cnd_path_0
 		if os.path.exists(cnd_path):
 			buffer = open(cnd_path, 'r').read()
 		elif os.path.exists(cnd_path_0):
@@ -195,8 +193,8 @@ def map2image():
 	dirname = os.path.dirname(out_path)
 	base_name = os.path.basename(root)
 
-	if (not dirname == '') and (not os.path.exists(dirname)):
-		os.makedirs(dirname)
+	# if (not dirname == '') and (not os.path.exists(dirname)):
+	# 	os.makedirs(dirname)
 
 	_opts = eval(str(options))
 	imgArray = _read_map(map_path, x_step_number, y_step_number, **_opts)

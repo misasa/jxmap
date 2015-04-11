@@ -25,8 +25,7 @@ JEOL X-ray Map""",
       ],
       entry_points= {
             "console_scripts": [
-                  "map2tiff = jxmap.commands:map2tiff",
-                  "map2raw = jxmap.commands:map2raw",
-                  "map2jpeg = jxmap.commands:map2jpeg",
+                  "jxmap-image = jxmap.commands:map2image",
+                  #"jxmap-raw = jxmap.commands:map2raw",
                   ]},
       )

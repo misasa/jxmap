@@ -1,7 +1,9 @@
 import sys
 import os
 import numpy
-from cv2 import cv
+import re
+#from cv2 import cv
+import Image
 from optparse import OptionParser
 from jxmap import __version__ as VERSION
 
@@ -9,7 +11,8 @@ def get_x_separated_args(option, opt, value, parser):
 	setattr(parser.values, option.dest, tuple([ int(arg) for arg in value.split('x') ]))
 
 def _parse_options():
-	parser = OptionParser(usage='usage: %prog [options] MAPFILE', version='%%prog %s' % VERSION)
+	prog = "jxmap-image"
+	parser = OptionParser(usage='usage: %prog [options] MAPFILE IMAGEFILE', version='%%prog %s' % VERSION)
 	parser.add_option("-g", "--geometry", type="string", action='callback', callback=get_x_separated_args,
 		help='Specify "X-STEP-NUMBERxY-STEP-NUMBER".', dest="step_numbers"
 		)
@@ -20,7 +23,28 @@ def _parse_options():
 	parser.add_option("-e", "--offset", type="int",
 		help='Specify offset in byte.', default=0
 		)
+	parser.add_option("-c", "--condition-file", type="string",
+		help='Specify condition file.'
+		)
+
 	options, args = parser.parse_args()
+ 	_opts = eval(str(options))
+
+	if len(args) != 2:
+		parser.error("incorrect number of arguments")
+
+	map_path = args[0]
+	out_path = args[1]
+
+
+	con = _get_condition(map_path, **_opts)
+	if options.step_numbers == None:
+		if con and con['x_step_number'] and con['y_step_number']:
+			options.step_numbers = (con['x_step_number'], con['y_step_number'])
+
+	if options.step_numbers == None:
+		raise RuntimeError, "could not get xy-step-numbers. specify geometry or condition-file"
+
 	return options, args
 
 def _dtype(bytes_per_data):
@@ -58,11 +82,15 @@ def _read_map(path, x_step_number, y_step_number, **options):
 	return imgArray
 
 def _output_path(path, ext = '.tiff'):
+	return _change_extension(path, ext)	
+
+def _change_extension(path, extension):
 	root, org_ext = os.path.splitext(path)
 	dirname = os.path.dirname(path)
-	file_name = os.path.basename(root) + ext
+	file_name = os.path.basename(root) + extension
 	file_path = os.path.join(dirname, file_name)
 	return file_path
+
 
 def _get_rpl_text(imgArray):
 	height, width = imgArray.shape
@@ -91,34 +119,105 @@ def _output_rpl(path, imgArray):
 	f = open(path, 'w')
 	f.write(rpl)
 
-def _output_image(extension = '.tiff'):
+def _cnd_path(path):
+	root, org_ext = os.path.splitext(path)
+	dirname = os.path.dirname(path)
+	base_name = os.path.basename(root)
+	return os.path.join(dirname, base_name + '.cnd')
+
+def _cnd_path_0(path):
+	root, org_ext = os.path.splitext(path)
+	dirname = os.path.dirname(path)
+	base_name = os.path.basename(root)
+	return os.path.join(dirname, '0.cnd')
+
+def _parse_condition_feepma(buffer):
+#	print buffer
+	dic = {}
+	m = re.search(r'\$XM_AP_SA_PIXELS%(\d+) (\d+) (\d+)', buffer)
+	if m:
+		dic['x_step_number'] = int(m.group(2))
+		dic['y_step_number'] = int(m.group(3))
+
+	return dic
+
+def _parse_condition_jxa1(buffer):
+	dic = {}
+	m = re.search(r'(\d+)\s+X-axis Step Number \[1~1024\]', buffer)
+	if m:
+		dic['x_step_number'] = int(m.group(1))
+	m = re.search(r'(\d+)\s+Y-axis Step Number \[1~1024\]', buffer)
+	if m:
+		dic['y_step_number'] = int(m.group(1))
+	return dic
+
+def _parse_condition(buffer):
+	if re.match(r'\$', buffer):
+		return _parse_condition_feepma(buffer)
+	else:
+		return _parse_condition_jxa1(buffer)
+
+def _read_condition(path, **options):
+	buffer = None
+	if options.get('condition_file', False):
+		cnd_path = options.get('condition_file')
+		if os.path.exists(cnd_path):
+			buffer = open(cnd_path, 'r').read()
+		else:
+			raise RuntimeError, "could not find %s" % cnd_path
+	else:
+		cnd_path = _cnd_path(path)
+		cnd_path_0 = _cnd_path_0(path)
+		if os.path.exists(cnd_path):
+			buffer = open(cnd_path, 'r').read()
+		elif os.path.exists(cnd_path_0):
+			buffer = open(cnd_path_0, 'r').read()
+	return buffer
+
+def _get_condition(path, **options):
+	buffer = _read_condition(path, **options)
+	if buffer:
+		return _parse_condition(buffer)
+
+def map2image():
 	options, args = _parse_options()
 	map_path = args[0]
+	out_path = args[1]
 	step_numbers = options.step_numbers
 	x_step_number = step_numbers[0]
 	y_step_number = step_numbers[1]
 	#print "file:%s x:%d y:%d" % (map_path, x_step_number, y_step_number)s
-	default_ofile_path = _output_path(map_path, extension)
+	#default_ofile_path = _output_path(map_path, extension)
+
+	root, extension = os.path.splitext(out_path)
+	dirname = os.path.dirname(out_path)
+	base_name = os.path.basename(root)
+
+	if not os.path.exists(dirname):
+		os.makedirs(dirname)
+
 	_opts = eval(str(options))
 	imgArray = _read_map(map_path, x_step_number, y_step_number, **_opts)
 
 	if extension == '.raw':
-		imgArray.tofile(default_ofile_path)
-		default_rpl_path = _output_path(map_path, '.rpl')
+		imgArray.tofile(out_path)
+		default_rpl_path = _output_path(out_path, '.rpl')
 		_output_rpl(default_rpl_path, imgArray)
 
 	else:
 		imgArray = imgArray/float(numpy.amax(imgArray)) * 255
 		imgArray = imgArray.astype(numpy.uint8).copy()
-		pimg2 = cv.fromarray(imgArray)
-		cv.SaveImage(default_ofile_path, pimg2)
-	
-def map2tiff():
-	_output_image('.tiff')
+		pilImg = Image.fromarray(imgArray)
+		pilImg.save(out_path)
+		#pimg2 = cv.fromarray(imgArray)
+		#cv.SaveImage(out_path, pimg2)
 
-def map2jpeg():
-	_output_image('.jpeg')
+# def map2tiff():
+# 	_output_image('.tiff')
 
-def map2raw():
-	_output_image('.raw')
+# def map2jpeg():
+# 	_output_image('.jpeg')
+
+# def map2raw():
+# 	_output_image('.raw')
 

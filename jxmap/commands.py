@@ -33,8 +33,8 @@ def _parse_options():
 	if len(args) != 2:
 		parser.error("incorrect number of arguments")
 
-	map_path = args[0]
-	out_path = args[1]
+	map_path = os.path.abspath(args[0])
+	out_path = os.path.abspath(args[1])
 
 
 	con = _get_condition(map_path, **_opts)
@@ -160,7 +160,7 @@ def _parse_condition(buffer):
 def _read_condition(path, **options):
 	buffer = None
 	if options.get('condition_file', False):
-		cnd_path = options.get('condition_file')
+		cnd_path = os.path.abspath(options.get('condition_file'))
 		if os.path.exists(cnd_path):
 			buffer = open(cnd_path, 'r').read()
 		else:
@@ -168,6 +168,8 @@ def _read_condition(path, **options):
 	else:
 		cnd_path = _cnd_path(path)
 		cnd_path_0 = _cnd_path_0(path)
+		print cnd_path
+		print cnd_path_0
 		if os.path.exists(cnd_path):
 			buffer = open(cnd_path, 'r').read()
 		elif os.path.exists(cnd_path_0):
@@ -181,8 +183,8 @@ def _get_condition(path, **options):
 
 def map2image():
 	options, args = _parse_options()
-	map_path = args[0]
-	out_path = args[1]
+	map_path = os.path.abspath(args[0])
+	out_path = os.path.abspath(args[1])
 	step_numbers = options.step_numbers
 	x_step_number = step_numbers[0]
 	y_step_number = step_numbers[1]
@@ -193,7 +195,7 @@ def map2image():
 	dirname = os.path.dirname(out_path)
 	base_name = os.path.basename(root)
 
-	if not os.path.exists(dirname):
+	if (not dirname == '') and (not os.path.exists(dirname)):
 		os.makedirs(dirname)
 
 	_opts = eval(str(options))

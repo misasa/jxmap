@@ -4,13 +4,14 @@ import numpy
 import shutil
 import re
 from nose.tools import *
-from jxmap.commands import _get_rpl_text
+from jxmap.commands import _get_rpl_text, _get_info_text
 from jxmap.commands import _dtype
 from jxmap.commands import _read_map
 from jxmap.commands import _parse_options
 from jxmap.commands import map2image
 from jxmap.commands import _cnd_path, _cnd_path_0
-from jxmap.commands import _read_condition, _parse_condition
+from jxmap.commands import _read_condition, _read_condition_0, _parse_condition
+from jxmap.commands import _magnification
 
 saved = None
 
@@ -64,7 +65,6 @@ def test_dtype():
 	assert_raises(RuntimeError, _dtype, 1)
 	assert_raises(RuntimeError, _dtype, 9)
 
-
 def test_get_rpl_text():
 	x_step_number = 920
 	y_step_number = 1000
@@ -109,12 +109,78 @@ def test_with_invalid_condition_path():
  	sys.argv = ['map2tiff', '--condition-file', 'example.cnd', 'tmp/7.map', 'tmp/7.raw']
 	assert_raises(RuntimeError, _parse_options)
 
-def test_parse_condition_0():
-	cnd_path = os.path.join(files_dir, '0.cnd')
-	buffer = open(cnd_path).read()
+def test_get_magnification():
+	assert_equal(_magnification(240000.0), 0.5)
+	assert_equal(_magnification(120000.0), 1.0)
+	assert_equal(_magnification(60000.0), 2.0)
+
+def test_get_info_text():
+	buffer = '''
+920      X-axis Step Number [1~1024]
+1000     Y-axis Step Number [1~1024]
+4.0      X Step Size [um]
+-20.8380 Measurement Center Position X [mm]
+16.8980  Measurement Center Position Y [mm]
+10.7432  Measurement Center Position Z [mm]
+Hello World                                
+Apr 4 06:52 2013
+F                       Element Name No.1-Seq.1 **********
+Ka                      X-ray Name
+1                       X-ray Order
+W                       Signal Name [W:WDS E:EDS I:IMS]
+1                       Channel Number[1-5:WDS 8-15:EDS 6,7:IMS]
+TAP                             Crystal Name
+1                       Crystal Number
+'''
+	con = _parse_condition(buffer)
+	text = _get_info_text(con)
+	assert_true(re.search(r'\$CM_TITLE Hello World F_CH1_TAP_Ka', text))	
+	assert_true(re.search(r'\$CM_MAG (\d+)', text))
+	assert_true(re.search(r'\$CM_FULL_SIZE 920 1000', text))		
+	assert_true(re.search(r'\$CM_STAGE_POS -20\.8380 16\.8980 10\.7432 0 0 0', text))
+	assert_true(re.search(r'\$\$SM_SCAN_ROTATION 0\.00', text))
+
+def test_parse_condition_jxa():
+	buffer = '''
+920      X-axis Step Number [1~1024]
+1000     Y-axis Step Number [1~1024]
+4.0      X Step Size [um]
+-20.8380 Measurement Center Position X [mm]
+16.8980  Measurement Center Position Y [mm]
+10.7432  Measurement Center Position Z [mm]
+Hello World                                
+Apr 4 06:52 2013
+F                       Element Name No.1-Seq.1 **********
+Ka                      X-ray Name
+1                       X-ray Order
+W                       Signal Name [W:WDS E:EDS I:IMS]
+1                       Channel Number[1-5:WDS 8-15:EDS 6,7:IMS]
+TAP                             Crystal Name
+1                       Crystal Number
+'''
 	con = _parse_condition(buffer)
 	assert_equal(con['x_step_number'], 920)
 	assert_equal(con['y_step_number'], 1000)
+	assert_equal(con['magnification'], 120000/920.0/4.0)
+	assert_equal(con['x_stage_position'], '-20.8380')
+	assert_equal(con['y_stage_position'], '16.8980')
+	assert_equal(con['z_stage_position'], '10.7432')
+	assert_equal(con['comment'], 'Hello World')
+	assert_equal(con['wds_cond_name'], 'F_CH1_TAP_Ka')
+
+def test_parse_condition_0():
+	cnd_path = os.path.join(files_dir, '0.cnd')
+	buffer = _read_condition_0(cnd_path, 7)
+	con = _parse_condition(buffer)
+	assert_true(con['x_step_number'])
+	assert_true(con['y_step_number'])
+	assert_true(con['magnification'])
+	assert_true(con['x_stage_position'])
+	assert_true(con['y_stage_position'])
+	assert_true(con['z_stage_position'])
+	assert_true(con['comment'])
+	assert_true(con['wds_cond_name'])
+
 
 def test_parse_condition_003():
 	cnd_path = os.path.join(files_dir, 'data003.cnd')
@@ -122,6 +188,12 @@ def test_parse_condition_003():
 	con = _parse_condition(buffer)
 	assert_equal(con['x_step_number'], 1800)
 	assert_equal(con['y_step_number'], 1600)
+	assert_true(con['magnification'])
+	assert_equal(con['x_stage_position'], '16.5407')
+	assert_equal(con['y_stage_position'], '19.9220')
+	assert_equal(con['z_stage_position'], '11.0355')
+	assert_equal(con['comment'], 'ref-mag-kam5')
+	assert_equal(con['wds_cond_name'], 'Ti_CH3_PETH_Ka')
 
 
 @with_setup(setup, teardown)
@@ -146,6 +218,8 @@ def test_map2iamge_jpeg():
 	sys.argv = ['map2jpeg', 'tmp/data003.map', 'tmp/jpeg/data003.jpeg']
 	map2image()
 	assert_true(os.path.exists('tmp/jpeg/data003.jpeg'))
+	assert_true(os.path.exists('tmp/jpeg/data003.txt'))
+
 
 def test_map2image_raw():
 	os.mkdir('tmp/raw')
@@ -155,3 +229,4 @@ def test_map2image_raw():
 	map2image()
 	assert_true(os.path.exists('tmp/raw/data003.raw'))
 	assert_true(os.path.exists('tmp/raw/data003.rpl'))
+	assert_true(os.path.exists('tmp/raw/data003.txt'))

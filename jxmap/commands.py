@@ -36,8 +36,13 @@ def _parse_options():
 	map_path = os.path.abspath(args[0])
 	out_path = os.path.abspath(args[1])
 
-
 	con = _get_condition(map_path, **_opts)
+	if con:
+		info = _get_info_text(con)
+		f = open(_change_extension(out_path, ".txt"), 'w')
+		f.write(info)
+		f.close()
+
 	if options.step_numbers == None:
 		if con and con['x_step_number'] and con['y_step_number']:
 			options.step_numbers = (con['x_step_number'], con['y_step_number'])
@@ -101,18 +106,32 @@ def _get_rpl_text(imgArray):
 	if data_length == 8:
 		data_type = 'float'
 
-	rpl = ""
-	rpl += "key\tvalue\n"
-	rpl += "width\t%d\n" % width
-	rpl += "height\t%d\n" % height
-	rpl += "depth\t%d\n" % 1
-	rpl += "offset\t%d\n" % 0
-	rpl += "data-length\t%d\n" % data_length
-	rpl += "data-type\t%s\n" % data_type
-	rpl += "byte-order\tlittle-endian\n"
-	rpl += "record-by\timage\n"
+	rpl = '''key\tvalue
+width\t%d
+height\t%d
+depth\t%d
+offset\t%d
+data-length\t%d
+data-type\t%s
+byte-order\tlittle-endian
+record-by\timage
+''' % (width, height, 1, 0, data_length, data_type)
 
 	return rpl
+
+def _get_info_text(con):
+
+	title = "$CM_TITLE %s %s" % (con['comment'], con['wds_cond_name'])
+	mag = "$CM_MAG %.0f" % (con['magnification'])
+	size = "$CM_FULL_SIZE %d %d" % (con['x_step_number'],con['y_step_number'])
+	stage_position = "$CM_STAGE_POS %s %s %s 0 0 0" % (con['x_stage_position'], con['y_stage_position'], con['z_stage_position'])
+
+	info = title + "\n"
+	info += mag + "\n"
+	info += size + "\n"
+	info += stage_position + "\n"
+	info += "$$SM_SCAN_ROTATION 0.00\n"
+	return info
 
 def _output_rpl(path, imgArray):
 	rpl = _get_rpl_text(imgArray)
@@ -131,24 +150,81 @@ def _cnd_path_0(path):
 	base_name = os.path.basename(root)
 	return os.path.join(dirname, '0.cnd')
 
+def _magnification(width_in_um):
+	return 120000/float(width_in_um)
+
 def _parse_condition_feepma(buffer):
-#	print buffer
+	#print buffer
 	dic = {}
 	m = re.search(r'\$XM_AP_SA_PIXELS%(\d+) (\d+) (\d+)', buffer)
 	if m:
-		dic['x_step_number'] = int(m.group(2))
+		x_step_number = int(m.group(2))
+		dic['x_step_number'] = x_step_number
 		dic['y_step_number'] = int(m.group(3))
+		m = re.search(r'\$XM_AP_SA_PIXEL_SIZE%(\d+) (\S+) (\S+) (\S+)', buffer)
+		if m:
+			x_step_size = float(m.group(2))
+			width_in_um = x_step_size * x_step_number
+			dic['magnification'] = _magnification(width_in_um)
 
+	m = re.search(r'\$XM_AP_SA_STAGE_POS%(\d+)_0 (\S+) (\S+) (\S+)', buffer)
+	if m:
+		dic['x_stage_position'] = m.group(2)
+		dic['y_stage_position'] = m.group(3)
+		dic['z_stage_position'] = m.group(4)
+	m = re.search(r'\$XM_AP_COMMENT%(\d+) (\S+)', buffer)
+	if m:
+		dic['comment'] = m.group(2)
+
+	m = re.search(r'\$XM_ELEM_WDS_COND_NAME%(\d+) (\S+)', buffer)
+	if m:
+		dic['wds_cond_name'] = m.group(2)
 	return dic
 
 def _parse_condition_jxa1(buffer):
 	dic = {}
+	# step-number
 	m = re.search(r'(\d+)\s+X-axis Step Number \[1~1024\]', buffer)
 	if m:
-		dic['x_step_number'] = int(m.group(1))
+		x_step_number = int(m.group(1))
+		dic['x_step_number'] = x_step_number
+		m = re.search(r'(\S+)\s+X Step Size \[um\]', buffer)
+		if m:
+			x_step_size = float(m.group(1))
+			width_in_um = x_step_size * x_step_number
+			dic['magnification'] = _magnification(width_in_um)
+
 	m = re.search(r'(\d+)\s+Y-axis Step Number \[1~1024\]', buffer)
 	if m:
 		dic['y_step_number'] = int(m.group(1))
+
+	m = re.search(r'(\S+)\s+Measurement Center Position X \[mm\]', buffer)
+	if m:
+		dic['x_stage_position'] = m.group(1)
+	m = re.search(r'(\S+)\s+Measurement Center Position Y \[mm\]', buffer)
+	if m:
+		dic['y_stage_position'] = m.group(1)
+	m = re.search(r'(\S+)\s+Measurement Center Position Z \[mm\]', buffer)
+	if m:
+		dic['z_stage_position'] = m.group(1)
+
+	wds_cond_name = ""
+	m = re.search(r'(\S+)\s+Element Name', buffer)
+	if m:
+		header = buffer[0:m.start()]
+		dic['comment'] = header.split("\n")[-3].strip()
+		wds_cond_name += m.group(1)
+	m = re.search(r'(\S+)\s+Channel Number', buffer)
+	if m:
+		wds_cond_name += "_CH" + m.group(1)
+	m = re.search(r'(\S+)\s+Crystal Name', buffer)
+	if m:
+		wds_cond_name += "_" + m.group(1)
+
+	m = re.search(r'(\S+)\s+X-ray Name', buffer)
+	if m:
+		wds_cond_name += "_" + m.group(1)
+	dic['wds_cond_name'] = wds_cond_name
 	return dic
 
 def _parse_condition(buffer):
@@ -156,6 +232,18 @@ def _parse_condition(buffer):
 		return _parse_condition_feepma(buffer)
 	else:
 		return _parse_condition_jxa1(buffer)
+
+def _read_condition_0(path, elem_idx):
+	buffer = open(path, 'r').read()
+	tokens = []
+	idx = 0
+	for m in re.finditer(r'(\S+)\s+Element Name No\.(\d+)-Seq\.(\d+) \*+', buffer):
+		tokens.append(buffer[idx:m.start()])
+		idx = m.start()
+	tokens.append(buffer[idx:-1])
+	header = tokens[0]
+	element = tokens[elem_idx]	
+	return header + element
 
 def _read_condition(path, **options):
 	buffer = None
@@ -171,7 +259,8 @@ def _read_condition(path, **options):
 		if os.path.exists(cnd_path):
 			buffer = open(cnd_path, 'r').read()
 		elif os.path.exists(cnd_path_0):
-			buffer = open(cnd_path_0, 'r').read()
+			buffer = _read_condition_0(cnd_path_0, 1)
+			#buffer = open(cnd_path_0, 'r').read()
 	return buffer
 
 def _get_condition(path, **options):

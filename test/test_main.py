@@ -19,6 +19,7 @@ files_dir = os.path.join(os.path.dirname(__file__), 'files')
 mapfile = os.path.join('tmp', 'big-920x1000.map')
 mapfile2 = os.path.join('tmp', 'little-1800x1600.map')
 mapfile_003 = os.path.join('tmp', 'data003.map')
+mapfile_006 = os.path.join('tmp', 'data006.map')
 mapfile_7 = os.path.join('tmp', '7.map')
 def setup_tmp():
 	if os.path.exists('tmp'):
@@ -145,6 +146,7 @@ def test_parse_condition_jxa():
 920      X-axis Step Number [1~1024]
 1000     Y-axis Step Number [1~1024]
 4.0      X Step Size [um]
+4.0      Y Step Size [um]
 -20.8380 Measurement Center Position X [mm]
 16.8980  Measurement Center Position Y [mm]
 10.7432  Measurement Center Position Z [mm]
@@ -161,12 +163,19 @@ TAP                             Crystal Name
 	con = _parse_condition(buffer)
 	assert_equal(con['x_step_number'], 920)
 	assert_equal(con['y_step_number'], 1000)
+	assert_equal(con['x_step_size'], 4.0)
+	assert_equal(con['y_step_size'], 4.0)
 	assert_equal(con['magnification'], 120000/920.0/4.0)
 	assert_equal(con['x_stage_position'], '-20.8380')
 	assert_equal(con['y_stage_position'], '16.8980')
 	assert_equal(con['z_stage_position'], '10.7432')
 	assert_equal(con['comment'], 'Hello World')
-	assert_equal(con['wds_cond_name'], 'F_CH1_TAP_Ka')
+	assert_equal(con['signal'], 'F_CH1_TAP_Ka')
+	assert_equal(con['element_name'], 'F')
+	assert_equal(con['channel_name'], 'CH1')
+	assert_equal(con['crystal_name'], 'TAP')
+	assert_equal(con['x_ray_name'], 'Ka')
+
 
 def test_parse_condition_0():
 	cnd_path = os.path.join(files_dir, '0.cnd')
@@ -174,16 +183,40 @@ def test_parse_condition_0():
 	con = _parse_condition(buffer)
 	assert_true(con['x_step_number'])
 	assert_true(con['y_step_number'])
+	assert_true(con['x_step_size'])
+	assert_true(con['y_step_size'])	
 	assert_true(con['magnification'])
 	assert_true(con['x_stage_position'])
 	assert_true(con['y_stage_position'])
 	assert_true(con['z_stage_position'])
 	assert_true(con['comment'])
-	assert_true(con['wds_cond_name'])
+	assert_true(con['signal'])
 
 
 def test_parse_condition_003():
 	cnd_path = os.path.join(files_dir, 'data003.cnd')
+	buffer = open(cnd_path).read()
+	con = _parse_condition(buffer)
+	assert_equal(con['x_step_number'], 1800)
+	assert_equal(con['y_step_number'], 1600)
+	assert_equal(con['x_step_size'], 0.5)
+	assert_equal(con['y_step_size'], 0.5)
+	assert_true(con['magnification'])
+	assert_equal(con['x_stage_position'], '16.5407')
+	assert_equal(con['y_stage_position'], '19.9220')
+	assert_equal(con['z_stage_position'], '11.0355')
+	assert_equal(con['comment'], 'ref-mag-kam5')
+	assert_equal(con['signal'], 'Ti_CH3_PETH_Ka')
+	assert_equal(con['element_name'], 'Ti')
+	assert_equal(con['channel_name'], 'CH3')
+	assert_equal(con['crystal_name'], 'PETH')
+	assert_equal(con['x_ray_name'], 'Ka')
+
+
+
+
+def test_parse_condition_006():
+	cnd_path = os.path.join(files_dir, 'data006.cnd')
 	buffer = open(cnd_path).read()
 	con = _parse_condition(buffer)
 	assert_equal(con['x_step_number'], 1800)
@@ -193,7 +226,8 @@ def test_parse_condition_003():
 	assert_equal(con['y_stage_position'], '19.9220')
 	assert_equal(con['z_stage_position'], '11.0355')
 	assert_equal(con['comment'], 'ref-mag-kam5')
-	assert_equal(con['wds_cond_name'], 'Ti_CH3_PETH_Ka')
+	assert_equal(con['signal'], 'COMPO')
+#	assert_equal(con['wds_cond_name'], 'Ti_CH3_PETH_Ka')
 
 
 @with_setup(setup, teardown)
@@ -213,13 +247,23 @@ def test_read_map_003():
 @with_setup(setup, teardown)
 def test_map2iamge_jpeg():
 	os.mkdir('tmp/jpeg')
-	shutil.copy(os.path.join(files_dir, 'data003.map'),'tmp')	
+	shutil.copy(os.path.join(files_dir, 'data003.map'),'tmp')
 	shutil.copy(os.path.join(files_dir, 'data003.cnd'),'tmp')	
 	sys.argv = ['map2jpeg', 'tmp/data003.map', 'tmp/jpeg/data003.jpeg']
 	map2image()
 	assert_true(os.path.exists('tmp/jpeg/data003.jpeg'))
 	assert_true(os.path.exists('tmp/jpeg/data003.txt'))
 
+@with_setup(setup, teardown)
+def test_map2iamge_tiff():
+	os.mkdir('tmp/jpeg')
+	shutil.copy(os.path.join(files_dir, 'data006.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'data006.cnd'),'tmp')	
+	sys.argv = ['map2jpeg', 'tmp/data006.map', 'tmp/jpeg/data006.tiff']
+	map2image()
+	assert_true(os.path.exists('tmp/jpeg/data006.tiff'))
+	assert_true(os.path.exists('tmp/jpeg/data006.txt'))
+	assert_true(os.path.exists('tmp/jpeg/data006.info'))
 
 def test_map2image_raw():
 	os.mkdir('tmp/raw')

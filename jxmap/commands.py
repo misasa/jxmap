@@ -2,6 +2,7 @@ import sys
 import os
 import numpy
 import re
+import yaml
 #from cv2 import cv
 import Image
 from optparse import OptionParser
@@ -41,6 +42,9 @@ def _parse_options():
 		info = _get_info_text(con)
 		f = open(_change_extension(out_path, ".txt"), 'w')
 		f.write(info)
+		f.close()
+		f = open(_change_extension(out_path, ".info"), 'w')
+		f.write(yaml.dump(con))
 		f.close()
 
 	if options.step_numbers == None:
@@ -121,7 +125,10 @@ record-by\timage
 
 def _get_info_text(con):
 
-	title = "$CM_TITLE %s %s" % (con['comment'], con['wds_cond_name'])
+	title_text = con['comment']
+	if con.get('signal'):
+		title_text += " " + con.get('signal')
+	title = "$CM_TITLE %s" % (title_text)
 	mag = "$CM_MAG %.0f" % (con['magnification'])
 	size = "$CM_FULL_SIZE %d %d" % (con['x_step_number'],con['y_step_number'])
 	stage_position = "$CM_STAGE_POS %s %s %s 0 0 0" % (con['x_stage_position'], con['y_stage_position'], con['z_stage_position'])
@@ -164,6 +171,9 @@ def _parse_condition_feepma(buffer):
 		m = re.search(r'\$XM_AP_SA_PIXEL_SIZE%(\d+) (\S+) (\S+) (\S+)', buffer)
 		if m:
 			x_step_size = float(m.group(2))
+			dic['x_step_size'] = x_step_size
+			dic['y_step_size'] = float(m.group(3))
+
 			width_in_um = x_step_size * x_step_number
 			dic['magnification'] = _magnification(width_in_um)
 
@@ -178,7 +188,16 @@ def _parse_condition_feepma(buffer):
 
 	m = re.search(r'\$XM_ELEM_WDS_COND_NAME%(\d+) (\S+)', buffer)
 	if m:
-		dic['wds_cond_name'] = m.group(2)
+		dic['signal'] = m.group(2)
+		vals = m.group(2).split('_')
+		dic['element_name'] = vals[0]
+		dic['channel_name'] = vals[1]
+		dic['crystal_name'] = vals[2]
+		dic['x_ray_name'] = vals[3]
+	m = re.search(r'\$XM_ELEM_IMS_SIGNAL_TYPE%(\d+) (\S+)', buffer)
+	if m:
+		dic['signal'] = m.group(2)
+
 	return dic
 
 def _parse_condition_jxa1(buffer):
@@ -191,12 +210,17 @@ def _parse_condition_jxa1(buffer):
 		m = re.search(r'(\S+)\s+X Step Size \[um\]', buffer)
 		if m:
 			x_step_size = float(m.group(1))
+			dic['x_step_size'] = x_step_size
 			width_in_um = x_step_size * x_step_number
 			dic['magnification'] = _magnification(width_in_um)
 
 	m = re.search(r'(\d+)\s+Y-axis Step Number \[1~1024\]', buffer)
 	if m:
 		dic['y_step_number'] = int(m.group(1))
+
+	m = re.search(r'(\S+)\s+Y Step Size \[um\]', buffer)
+	if m:
+		dic['y_step_size'] = float(m.group(1))
 
 	m = re.search(r'(\S+)\s+Measurement Center Position X \[mm\]', buffer)
 	if m:
@@ -214,17 +238,21 @@ def _parse_condition_jxa1(buffer):
 		header = buffer[0:m.start()]
 		dic['comment'] = header.split("\n")[-3].strip()
 		wds_cond_name += m.group(1)
+		dic['element_name'] = m.group(1)
 	m = re.search(r'(\S+)\s+Channel Number', buffer)
 	if m:
 		wds_cond_name += "_CH" + m.group(1)
+		dic['channel_name'] = "CH" + m.group(1)
 	m = re.search(r'(\S+)\s+Crystal Name', buffer)
 	if m:
 		wds_cond_name += "_" + m.group(1)
+		dic['crystal_name'] = m.group(1)
 
 	m = re.search(r'(\S+)\s+X-ray Name', buffer)
 	if m:
 		wds_cond_name += "_" + m.group(1)
-	dic['wds_cond_name'] = wds_cond_name
+		dic['x_ray_name'] = m.group(1)
+	dic['signal'] = wds_cond_name
 	return dic
 
 def _parse_condition(buffer):

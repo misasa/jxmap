@@ -8,6 +8,52 @@ import Image
 from optparse import OptionParser
 from jxmap import __version__ as VERSION
 
+def map2image():
+	options, args = _parse_options()
+
+	map_path = os.path.abspath(args[0])
+	out_path = os.path.abspath(args[1])
+	step_numbers = options.step_numbers
+	x_step_number = step_numbers[0]
+	y_step_number = step_numbers[1]
+
+	root, extension = os.path.splitext(out_path)
+	dirname = os.path.dirname(out_path)
+	base_name = os.path.basename(root)
+
+	_opts = eval(str(options))
+	imgArray = _read_map(map_path, x_step_number, y_step_number, **_opts)
+
+	if extension == '.raw':
+		imgArray.tofile(out_path)
+		default_rpl_path = _output_path(out_path, '.rpl')
+		_output_rpl(default_rpl_path, imgArray)
+
+	else:
+		imgArray = imgArray/float(numpy.amax(imgArray)) * 255
+		imgArray = imgArray.astype(numpy.uint8).copy()
+		pilImg = Image.fromarray(imgArray)
+		pilImg.save(out_path)
+
+def map2info():
+	prog = "jxmap-info"
+	parser = OptionParser(usage='usage: %prog [options] MAPFILE', version='%%prog %s' % VERSION)
+	parser.add_option("-c", "--condition-file", type="string",
+		help='Specify condition file.'
+		)
+
+	options, args = parser.parse_args()
+ 	_opts = eval(str(options))
+
+	if len(args) != 1:
+		parser.error("incorrect number of arguments")
+
+	map_path = os.path.abspath(args[0])
+
+	con = _get_condition(map_path, **_opts)
+	if con:
+		print yaml.dump(con)
+
 def get_x_separated_args(option, opt, value, parser):
 	setattr(parser.values, option.dest, tuple([ int(arg) for arg in value.split('x') ]))
 
@@ -48,7 +94,7 @@ def _parse_options():
 		f.close()
 
 	if options.step_numbers == None:
-		if con and con['x_step_number'] and con['y_step_number']:
+		if con and con.get('x_step_number') and con.get('y_step_number'):
 			options.step_numbers = (con['x_step_number'], con['y_step_number'])
 
 	if options.step_numbers == None:
@@ -124,18 +170,19 @@ record-by\timage
 	return rpl
 
 def _get_info_text(con):
-	title_text = con.get('comment', 'map')
-	if con.get('signal'):
-		title_text += " " + con.get('signal')
-	title = "$CM_TITLE %s" % (title_text)
-	mag = "$CM_MAG %.0f" % (con['magnification'])
-	size = "$CM_FULL_SIZE %d %d" % (con['x_step_number'],con['y_step_number'])
-	stage_position = "$CM_STAGE_POS %s %s %s 0 0 0" % (con['x_stage_position'], con['y_stage_position'], con['z_stage_position'])
+	# title_text = con.get('comment', 'map')
+	# if con.get('signal'):
+	# 	title_text += " " + con.get('signal')
+	# title = "$CM_TITLE %s" % (title_text)
+	# if con.get('magnification'):
+	# 	mag = "$CM_MAG %.0f" % (con['magnification'])
+#	size = "$CM_FULL_SIZE %d %d" % (con['x_step_number'],con['y_step_number'])
+#	stage_position = "$CM_STAGE_POS %s %s %s 0 0 0" % (con['x_stage_position'], con['y_stage_position'], con['z_stage_position'])
 
-	info = title + "\n"
-	info += mag + "\n"
-	info += size + "\n"
-	info += stage_position + "\n"
+	info = "$CM_TITLE %s %s\n" % (con.get('comment', 'map'), con.get('signal', 'signal'))
+	info += "$CM_MAG %.0f\n" % con.get('magnification', 1)
+	info += "$CM_FULL_SIZE %d %d\n" % (con.get('x_step_number', 0), con.get('y_step_number', 0))
+	info += "$CM_STAGE_POS %s %s %s 0 0 0\n" % (con.get('x_stage_position', '0'), con.get('y_stage_position', '0'), con.get('z_stage_position', '0'))
 	info += "$$SM_SCAN_ROTATION 0.00\n"
 	return info
 
@@ -162,7 +209,7 @@ def _magnification(width_in_um):
 def _parse_condition_feepma(buffer):
 	#print buffer
 	dic = {}
-	m = re.search(r'\$XM_AP_SA_PIXELS%(\d+) (\d+) (\d+)', buffer)
+	m = re.search(r'SA_PIXELS%(\d+) (\d+) (\d+)', buffer)
 	if m:
 		x_step_number = int(m.group(2))
 		dic['x_step_number'] = x_step_number
@@ -181,6 +228,14 @@ def _parse_condition_feepma(buffer):
 		dic['x_stage_position'] = m.group(2)
 		dic['y_stage_position'] = m.group(3)
 		dic['z_stage_position'] = m.group(4)
+
+	m = re.search(r'\$XM_AP_BSA_STAGE_POS%(\d+) (\S+) (\S+) (\S+)', buffer)
+	if m:
+		dic['x_stage_position'] = m.group(2)
+		dic['y_stage_position'] = m.group(3)
+		dic['z_stage_position'] = m.group(4)
+
+
 	m = re.search(r'\$XM_AP_COMMENT%(\d+) (\S+)', buffer)
 	if m:
 		dic['comment'] = m.group(2)
@@ -294,46 +349,4 @@ def _get_condition(path, **options):
 	buffer = _read_condition(path, **options)
 	if buffer:
 		return _parse_condition(buffer)
-
-def map2image():
-	options, args = _parse_options()
-	map_path = os.path.abspath(args[0])
-	out_path = os.path.abspath(args[1])
-	step_numbers = options.step_numbers
-	x_step_number = step_numbers[0]
-	y_step_number = step_numbers[1]
-	#print "file:%s x:%d y:%d" % (map_path, x_step_number, y_step_number)s
-	#default_ofile_path = _output_path(map_path, extension)
-
-	root, extension = os.path.splitext(out_path)
-	dirname = os.path.dirname(out_path)
-	base_name = os.path.basename(root)
-
-	# if (not dirname == '') and (not os.path.exists(dirname)):
-	# 	os.makedirs(dirname)
-
-	_opts = eval(str(options))
-	imgArray = _read_map(map_path, x_step_number, y_step_number, **_opts)
-
-	if extension == '.raw':
-		imgArray.tofile(out_path)
-		default_rpl_path = _output_path(out_path, '.rpl')
-		_output_rpl(default_rpl_path, imgArray)
-
-	else:
-		imgArray = imgArray/float(numpy.amax(imgArray)) * 255
-		imgArray = imgArray.astype(numpy.uint8).copy()
-		pilImg = Image.fromarray(imgArray)
-		pilImg.save(out_path)
-		#pimg2 = cv.fromarray(imgArray)
-		#cv.SaveImage(out_path, pimg2)
-
-# def map2tiff():
-# 	_output_image('.tiff')
-
-# def map2jpeg():
-# 	_output_image('.jpeg')
-
-# def map2raw():
-# 	_output_image('.raw')
 

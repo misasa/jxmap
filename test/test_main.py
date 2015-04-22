@@ -8,7 +8,7 @@ from jxmap.commands import _get_rpl_text, _get_info_text
 from jxmap.commands import _dtype
 from jxmap.commands import _read_map
 from jxmap.commands import _parse_options
-from jxmap.commands import map2image
+from jxmap.commands import map2image, map2info
 from jxmap.commands import _cnd_path, _cnd_path_0
 from jxmap.commands import _read_condition, _read_condition_0, _parse_condition
 from jxmap.commands import _magnification
@@ -221,6 +221,15 @@ def test_parse_condition_ok10vm_a():
 	assert_equal(con['x_ray_name'], 'Ka')
 	#assert_equal(con['comment'], 'OK10VM-a')
 
+def test_parse_condition_ok10vm_a_2():
+	cnd_path = os.path.join(files_dir, 'OK10VM-a-2.cnd')
+	buffer = open(cnd_path).read()
+	con = _parse_condition(buffer)
+	assert_equal(con['x_ray_name'], 'Ka')
+	assert_equal(con['x_step_number'], 2000)
+	assert_equal(con['y_step_number'], 1500)
+	assert_equal(con['x_stage_position'], '-19.2155')
+
 
 
 
@@ -273,6 +282,7 @@ def test_map2iamge_jpeg_2():
 	assert_true(os.path.exists('tmp/jpeg/OK10VM-a.jpeg'))
 	assert_true(os.path.exists('tmp/jpeg/OK10VM-a.txt'))
 
+
 @with_setup(setup, teardown)
 def test_map2iamge_tiff():
 	os.mkdir('tmp/jpeg')
@@ -293,3 +303,22 @@ def test_map2image_raw():
 	assert_true(os.path.exists('tmp/raw/data003.raw'))
 	assert_true(os.path.exists('tmp/raw/data003.rpl'))
 	assert_true(os.path.exists('tmp/raw/data003.txt'))
+
+
+@with_setup(setup, teardown)
+def test_map2iamge_jpeg_3():
+	os.mkdir('tmp/jpeg')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.cnd'),'tmp')	
+	sys.argv = ['map2jpeg', 'tmp/OK10VM-a-2.map', 'tmp/jpeg/OK10VM-a-2.jpeg']
+	map2image()
+	assert_true(os.path.exists('tmp/jpeg/OK10VM-a-2.jpeg'))
+	assert_true(os.path.exists('tmp/jpeg/OK10VM-a-2.txt'))
+
+@with_setup(setup, teardown)
+def test_map2iamge_jpeg_3():
+	os.mkdir('tmp/jpeg')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.cnd'),'tmp')	
+	sys.argv = ['map2info', 'tmp/OK10VM-a-2.map']
+	map2info()

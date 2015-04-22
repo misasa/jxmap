@@ -124,8 +124,7 @@ record-by\timage
 	return rpl
 
 def _get_info_text(con):
-
-	title_text = con['comment']
+	title_text = con.get('comment', 'map')
 	if con.get('signal'):
 		title_text += " " + con.get('signal')
 	title = "$CM_TITLE %s" % (title_text)

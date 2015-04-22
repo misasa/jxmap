@@ -21,6 +21,8 @@ mapfile2 = os.path.join('tmp', 'little-1800x1600.map')
 mapfile_003 = os.path.join('tmp', 'data003.map')
 mapfile_006 = os.path.join('tmp', 'data006.map')
 mapfile_7 = os.path.join('tmp', '7.map')
+mapfile_ok10vm_a = os.path.join('tmp', 'OK10VM-a.map')
+
 def setup_tmp():
 	if os.path.exists('tmp'):
 		shutil.rmtree('tmp')
@@ -212,6 +214,13 @@ def test_parse_condition_003():
 	assert_equal(con['crystal_name'], 'PETH')
 	assert_equal(con['x_ray_name'], 'Ka')
 
+def test_parse_condition_ok10vm_a():
+	cnd_path = os.path.join(files_dir, 'OK10VM-a.cnd')
+	buffer = open(cnd_path).read()
+	con = _parse_condition(buffer)
+	assert_equal(con['x_ray_name'], 'Ka')
+	#assert_equal(con['comment'], 'OK10VM-a')
+
 
 
 
@@ -253,6 +262,16 @@ def test_map2iamge_jpeg():
 	map2image()
 	assert_true(os.path.exists('tmp/jpeg/data003.jpeg'))
 	assert_true(os.path.exists('tmp/jpeg/data003.txt'))
+
+@with_setup(setup, teardown)
+def test_map2iamge_jpeg_2():
+	os.mkdir('tmp/jpeg')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'OK10VM-a.cnd'),'tmp')	
+	sys.argv = ['map2jpeg', 'tmp/OK10VM-a.map', 'tmp/jpeg/OK10VM-a.jpeg']
+	map2image()
+	assert_true(os.path.exists('tmp/jpeg/OK10VM-a.jpeg'))
+	assert_true(os.path.exists('tmp/jpeg/OK10VM-a.txt'))
 
 @with_setup(setup, teardown)
 def test_map2iamge_tiff():

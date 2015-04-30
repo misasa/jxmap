@@ -84,6 +84,7 @@ def _parse_options():
 	out_path = os.path.abspath(args[1])
 
 	con = _get_condition(map_path, **_opts)
+
 	if con:
 		info = _get_info_text(con)
 		f = open(_change_extension(out_path, ".txt"), 'w')
@@ -93,12 +94,17 @@ def _parse_options():
 		f.write(yaml.dump(con))
 		f.close()
 
+	if con and con.get('scan_mode'):
+		options.scan_mode = con.get('scan_mode')
+
 	if options.step_numbers == None:
 		if con and con.get('x_step_number') and con.get('y_step_number'):
 			options.step_numbers = (con['x_step_number'], con['y_step_number'])
 
 	if options.step_numbers == None:
 		raise RuntimeError, "could not get xy-step-numbers. specify geometry or condition-file"
+
+
 
 	return options, args
 
@@ -125,14 +131,19 @@ def _read_map(path, x_step_number, y_step_number, **options):
 	offset = file_size - data_count * bytes_per_data
 	if options.get('offset', False):
 		offset = options.get('offset')
-
+	#print "%s %dx%d %d %d %d" % (path, x_step_number, y_step_number, file_size, offset, bytes_per_data)
 	dtype = _dtype(bytes_per_data)
+
 	imgArray = numpy.frombuffer(buffer, dtype=dtype, count=data_count, offset=offset).copy()
 
 	if options.get('swap_byte', False):
 		imgArray.byteswap(True)
-	imgArray = imgArray.reshape((x_step_number, y_step_number)).copy()
-	imgArray = numpy.rot90(imgArray, 3).copy()
+
+	if options.get('scan_mode', 'S') == 'B':
+		imgArray = imgArray.reshape((y_step_number, x_step_number)).copy()
+	else:
+		imgArray = imgArray.reshape((x_step_number, y_step_number)).copy()
+		imgArray = numpy.rot90(imgArray, 3).copy()
 
 	return imgArray
 
@@ -225,12 +236,14 @@ def _parse_condition_feepma(buffer):
 
 	m = re.search(r'\$XM_AP_SA_STAGE_POS%(\d+)_0 (\S+) (\S+) (\S+)', buffer)
 	if m:
+		dic['scan_mode'] = 'S'
 		dic['x_stage_position'] = m.group(2)
 		dic['y_stage_position'] = m.group(3)
 		dic['z_stage_position'] = m.group(4)
 
 	m = re.search(r'\$XM_AP_BSA_STAGE_POS%(\d+) (\S+) (\S+) (\S+)', buffer)
 	if m:
+		dic['scan_mode'] = 'B'
 		dic['x_stage_position'] = m.group(2)
 		dic['y_stage_position'] = m.group(3)
 		dic['z_stage_position'] = m.group(4)
@@ -275,6 +288,11 @@ def _parse_condition_jxa1(buffer):
 	m = re.search(r'(\S+)\s+Y Step Size \[um\]', buffer)
 	if m:
 		dic['y_step_size'] = float(m.group(1))
+
+	m = re.search(r'(\S)\s+Stage\[S\] or Beam\[B\] Scan', buffer)
+	if m:
+		dic['scan_mode'] = m.group(1)
+
 
 	m = re.search(r'(\S+)\s+Measurement Center Position X \[mm\]', buffer)
 	if m:

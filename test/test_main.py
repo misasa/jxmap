@@ -149,6 +149,7 @@ def test_parse_condition_jxa():
 1000     Y-axis Step Number [1~1024]
 4.0      X Step Size [um]
 4.0      Y Step Size [um]
+S			Stage[S] or Beam[B] Scan
 -20.8380 Measurement Center Position X [mm]
 16.8980  Measurement Center Position Y [mm]
 10.7432  Measurement Center Position Z [mm]
@@ -177,6 +178,7 @@ TAP                             Crystal Name
 	assert_equal(con['channel_name'], 'CH1')
 	assert_equal(con['crystal_name'], 'TAP')
 	assert_equal(con['x_ray_name'], 'Ka')
+	assert_equal(con['scan_mode'], 'S')
 
 
 def test_parse_condition_0():
@@ -213,6 +215,8 @@ def test_parse_condition_003():
 	assert_equal(con['channel_name'], 'CH3')
 	assert_equal(con['crystal_name'], 'PETH')
 	assert_equal(con['x_ray_name'], 'Ka')
+	assert_equal(con['scan_mode'], 'S')
+
 
 def test_parse_condition_ok10vm_a():
 	cnd_path = os.path.join(files_dir, 'OK10VM-a.cnd')
@@ -306,7 +310,7 @@ def test_map2image_raw():
 
 
 @with_setup(setup, teardown)
-def test_map2iamge_jpeg_3():
+def test_map2iamge_jpeg_OK10VM():
 	os.mkdir('tmp/jpeg')
 	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.map'),'tmp')
 	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.cnd'),'tmp')	
@@ -315,10 +319,29 @@ def test_map2iamge_jpeg_3():
 	assert_true(os.path.exists('tmp/jpeg/OK10VM-a-2.jpeg'))
 	assert_true(os.path.exists('tmp/jpeg/OK10VM-a-2.txt'))
 
-@with_setup(setup, teardown)
-def test_map2iamge_jpeg_3():
-	os.mkdir('tmp/jpeg')
+#@with_setup(setup, teardown)
+def test_map2iamge_jpeg_ProbeScan():
+	#os.mkdir('tmp/jpeg')
+	shutil.copy(os.path.join(files_dir, 'ProbeScan.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'ProbeScan.cnd'),'tmp')	
+	sys.argv = ['map2jpeg', 'tmp/ProbeScan.map', 'tmp/jpeg/ProbeScan.jpeg']
+	map2image()
+	assert_true(os.path.exists('tmp/jpeg/ProbeScan.jpeg'))
+	assert_true(os.path.exists('tmp/jpeg/ProbeScan.txt'))
+
+
+def test_map2info_jpeg_3():
 	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.map'),'tmp')
 	shutil.copy(os.path.join(files_dir, 'OK10VM-a-2.cnd'),'tmp')	
 	sys.argv = ['map2info', 'tmp/OK10VM-a-2.map']
 	map2info()
+
+#@with_setup(setup, teardown)
+def test_map2info():
+	shutil.copy(os.path.join(files_dir, 'ProbeScan.map'),'tmp')
+	shutil.copy(os.path.join(files_dir, 'ProbeScan.cnd'),'tmp')	
+	sys.argv = ['map2info', 'tmp/ProbeScan.map']
+	map2info()
+
+
+

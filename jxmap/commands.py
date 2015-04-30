@@ -90,9 +90,9 @@ def _parse_options():
 		f = open(_change_extension(out_path, ".txt"), 'w')
 		f.write(info)
 		f.close()
-		f = open(_change_extension(out_path, ".info"), 'w')
-		f.write(yaml.dump(con))
-		f.close()
+		# f = open(_change_extension(out_path, ".info"), 'w')
+		# f.write(yaml.dump(con))
+		# f.close()
 
 	if con and con.get('scan_mode'):
 		options.scan_mode = con.get('scan_mode')

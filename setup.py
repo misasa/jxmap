@@ -3,7 +3,6 @@ import sys, os
 
 from jxmap import __version__ as VERSION
 
-
 setup(name='jxmap',
       version=VERSION,
       description="JEOL X-ray Map",
@@ -25,8 +24,8 @@ JEOL X-ray Map""",
       ],
       entry_points= {
             "console_scripts": [
-                  "jxmap-image = jxmap.commands:map2image",
-                  "jxmap-info = jxmap.commands:map2info",
+                  "jxmap-image = jxmap.map2image:map2image",
+                  "jxmap-info = jxmap.map2info:map2info",
                   #"jxmap-raw = jxmap.commands:map2raw",
                   ]},
       )

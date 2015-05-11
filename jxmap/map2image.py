@@ -13,8 +13,6 @@ def map2image():
 	options, args = _parse_options()
  	#_opts = eval(str(options))
 
-	if len(args) != 2:
-		parser.error("incorrect number of arguments")
 
 	map_path = os.path.abspath(args[0])
 	out_path = os.path.abspath(args[1])
@@ -89,6 +87,10 @@ def _parse_options():
 		)
 
 	options, args = parser.parse_args()
+
+	if len(args) != 2:
+		parser.error("incorrect number of arguments")
+
 	return options, args
 
 def _output_path(path, ext = '.tiff'):

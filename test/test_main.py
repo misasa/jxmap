@@ -19,6 +19,3 @@ def setup():
 
 def teardown():
 	sys.argv = saved
-
-def test_version():
-	assert_equal(VERSION, '0.0.4')

@@ -19,17 +19,25 @@ JEOL X-ray Map""",
       zip_safe=False,
       test_suite='nose.collector',
       tests_require=['Nose'],
+      #pip install numpy python-dateutil pytz pyparsing six --force-reinstall --upgrade
       install_requires=[
           # -*- Extra requirements: -*-
             "PyYAML",
+            "PIL",
             "numpy",
-            "PIL"          
+            "python-dateutil",
+            "pytz", 
+            "pyparsing", 
+            "six",
+            "scipy",         
       ],
       entry_points= {
             "console_scripts": [
                   "jxmap-image = jxmap.map2image:map2image",
                   "jxmap-info = jxmap.map2info:map2info",
                   "u8raw = jxmap.u8raw:u8raw"
+                  "phase-analysis-kmeans = jxmap.phase_analysis:phase_analysis_kmeans",
+                  "phase-map-creation = jxmap.phase_analysis:map_create",                  
                   #"jxmap-raw = jxmap.commands:map2raw",
                   ]},
       )

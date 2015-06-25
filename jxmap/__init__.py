@@ -4,8 +4,11 @@ import os
 import sys
 import re
 import numpy
+import pickle
+import matplotlib
+import PIL
 
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 
 def byteorder(rpl):
 	o = ""
@@ -29,7 +32,6 @@ def load_rpl(rpl_path):
 	return rpl
 
 def load_raw(path, rpl):
-	print rpl
 	width = rpl["width"]
 	height = rpl["height"]
 	dtype = 'u1'
@@ -42,6 +44,173 @@ def load_raw(path, rpl):
 		dtype = byteorder(rpl) + 'f8' 
 	
 	return numpy.fromfile(path, dtype=dtype,count=int(width)*int(height))
+
+def load_pickle(pkl_path):
+	f_pickle = open(pkl_path, 'rb')
+	imlist = pickle.load(f_pickle)
+	numphase = pickle.load(f_pickle)
+	centroids = pickle.load(f_pickle)
+	variance = pickle.load(f_pickle)
+	code = pickle.load(f_pickle)
+	distance = pickle.load(f_pickle)
+
+	setting = {}
+	setting['imlist'] = imlist
+	setting['numphase'] = numphase
+	setting['centroids'] = centroids
+	setting['variance'] = variance
+	setting['code'] = code
+	setting['distance'] = distance
+	
+	return PhaseMap(setting)
+
+
+class PhaseMap():
+	def __init__(self, setting):
+		self.colors = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Dark Orange", "Light Green", "Dark Green", "Light Blue", "Brown", "Light Yellow", "Violet", "Tan", "Sky Blue"]
+		self.plot_colors = [color.replace(' ','').lower() for color in self.colors]
+		self.plot_rgbs = []
+		
+		for color in self.plot_colors:
+			rgb = matplotlib.colors.ColorConverter().to_rgb(color)
+			self.plot_rgbs.append([int(f * 255) for f in rgb])
+		
+		self.setting = setting
+		self.imlist = setting['imlist']
+		self.numphase = setting['numphase']
+		self.centroids = setting['centroids']
+		self.variance = setting['variance']
+		self.code = setting['code']
+		self.distance = setting['distance']
+#		self.features = features
+		self.element_names = [ os.path.splitext(imname)[0] for imname in self.imlist ]
+
+
+		self.load_features()
+		
+		hs = []
+		pixel_sum = 0
+		for idx in range(len(self.centroids)):
+			h = {}
+			locs = numpy.where(self.code == idx)[0]
+			
+			t = []
+			for element_idx in range(len(self.element_names)): 
+				fs = self.features[locs, element_idx]
+				t.append( [ numpy.min(fs), numpy.max(fs), numpy.mean(fs) ] )
+			
+			h['code'] = idx
+			h['centroid'] = self.centroids[idx]
+			h['sum_centroid'] = sum(h['centroid'])
+			h['pixel_count'] = len(locs)
+			h['intensity_range'] = t
+			pixel_sum += h['pixel_count']
+			hs.append(h)
+		
+		phase_in_lisps = []
+		for h in hs:
+			h['pixel_percent'] = h['pixel_count']/float(pixel_sum) * 100
+		
+		sorted_hs = sorted(hs, key=lambda h: h['sum_centroid'])
+		sorted_hs.reverse()
+		self.table = sorted_hs
+	
+	def load_features(self):
+		raw_path = self.imlist[0]
+		root, ext = os.path.splitext(raw_path)
+		dirname = os.path.dirname(raw_path)
+		rpl_path = os.path.join(dirname, os.path.basename(root) + '.rpl')
+		rpl = load_rpl(rpl_path)
+		self.width = int(rpl['width'])
+		self.height = int(rpl['height'])
+
+		ims = []
+		for path in self.imlist:
+			root, ext = os.path.splitext(path)
+			dirname = os.path.dirname(path)
+			rpl_path = os.path.join(dirname, os.path.basename(root) + '.rpl')
+			tmp_rpl = load_rpl(rpl_path)
+			ims = numpy.append(ims, load_raw(path, tmp_rpl))	
+			#ims = numpy.append(ims, numpy.fromfile(path, dtype='<u2',count=int(self.width)*int(self.height)))	
+		self.features = ims.reshape(len(self.imlist), int(self.width)*int(self.height)).transpose()	
+		
+	
+	def show_table(self, out):
+		element_names = self.element_names
+		sorted_hs = self.table
+		colors = self.colors
+		header = "%8s" % "name" + "%15s" % "color" + "%5s" % "code"  + "%10s" % "area (%)"
+		for element_idx in range(len(self.element_names)):
+			header += "%10s" % self.element_names[element_idx]
+		#	header += " [%5s - %5s (%10s)] " % ("min", "max", "mean")
+		header += "%10s" % "sum"
+		out.write(header + "\n")
+		for idx in range(len(sorted_hs)):
+			h = sorted_hs[idx]
+			centroid = h['centroid']
+			intensity_range = h['intensity_range']
+			line = "Phase-%02d" % idx + "%15s" % colors[idx % len(colors)] + "%5d" % h['code'] + "%10.2f" % h['pixel_percent']
+			for element_idx in range(len(element_names)):
+				mean = centroid[element_idx]
+				line += "%10.2f" % mean
+		#		line += " [%5d - %5d (%10.2f)] " % (intensity_range[element_idx][0], intensity_range[element_idx][1], intensity_range[element_idx][2] )
+			line += "%10.2f" % h['sum_centroid']
+			out.write(line + "\n")
+		
+	
+	def dump_lisp(self, path, root_name):
+		sorted_hs = self.table
+		element_names = self.element_names
+		phase_in_lisps = []
+		for idx in range(len(sorted_hs)):
+			h = sorted_hs[idx]	
+			lisp = "(\"Phase-%02d\" ((\"%s\" %d %d %.5f)) %.5f :and \"%s\")" % (idx, root_name, h['code'], h['code'], h['pixel_percent'], h['pixel_percent'], self.colors[idx % len(self.colors)])
+			phase_in_lisps.append(lisp)
+
+		lisp = open(path, 'w')
+		lisp.write("(" + "\n".join(phase_in_lisps) + ")\n")
+		lisp.write("(16711680 \"Phase-00\"\n(" + "\n".join([ "(\"Phase-%02d\" \"%s\")" % (idx, root_name) for idx in range(len(self.centroids)) ]) + "))\n")
+		lisp.write("(" + " ".join([ "\"%s\"" % element_name for element_name in element_names]) + (" \"%s\"" % root_name) + ")\n")
+		lisp.close()
+
+	def dump_raw(self, default_raw_path):
+		numpy.array(self.code).astype('int16').tofile(default_raw_path)
+		
+	def dump_image(self, default_image_path):
+		codeim = self.code.reshape(self.height,self.width)
+		yPix, xPix = codeim.shape
+		data = numpy.zeros( (yPix,xPix,3), dtype=numpy.uint8)
+		for i in range(len(self.table)):
+			data[numpy.where(codeim == i)] = self.plot_rgbs[i]
+
+		img = PIL.Image.fromarray(data, 'RGB')
+		img.save(default_image_path)
+		
+		#print self.plot_rgbs
+		
+		#numpy.array(self.code).astype('int16').tofile(default_raw_path)
+	
+	def dump_rpl(self, default_rpl_path):
+		rpl = open(default_rpl_path, 'w')
+		rpl.write("key\tvalue\n")
+		rpl.write("width\t%d\n" % self.width)
+		rpl.write("height\t%d\n" % self.height)
+		rpl.write("depth\t%d\n" % 1)
+		rpl.write("offset\t%d\n" % 0)
+		rpl.write("data-length\t%d\n" % 2)
+		rpl.write("data-type\tunsigned\n")
+		rpl.write("byte-order\tlittle-endian\n")
+		rpl.write("record-by\timage\n")
+		rpl.close()
+	
+	# def show_figure(self):
+	# 	print self.code
+	# 	codeim = self.code.reshape(self.height,self.width)
+	# 	figure()
+	# 	gray()
+	# 	axis('off')
+	# 	imshow(codeim)
+	# 	show()
 
 
 class Jxmap(object):

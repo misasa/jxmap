@@ -5,7 +5,44 @@ import sys
 import re
 import numpy
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
+
+def byteorder(rpl):
+	o = ""
+	if rpl["byte-order"] == "big-endian":
+		o = ">"
+	elif rpl["byte-order"] == "little-endian":
+		o = "<"
+	
+	return o
+
+def load_rpl(rpl_path):
+	rpl = {}
+	f = open(rpl_path, 'rb')
+	buffer = f.read()
+	key_vals = buffer.split('\n')
+	for key_val in key_vals:
+		if key_val != "":
+			key, val = key_val.split('\t')
+			rpl[key] = val
+	f.close()
+	return rpl
+
+def load_raw(path, rpl):
+	print rpl
+	width = rpl["width"]
+	height = rpl["height"]
+	dtype = 'u1'
+	
+	if int(rpl["data-length"]) == 2:
+		dtype = byteorder(rpl) + 'u2' 
+	elif int(rpl["data-length"]) == 4:
+		dtype = byteorder(rpl) + 'u4' 
+	elif int(rpl["data-length"]) == 8:
+		dtype = byteorder(rpl) + 'f8' 
+	
+	return numpy.fromfile(path, dtype=dtype,count=int(width)*int(height))
+
 
 class Jxmap(object):
 	class_var = "hoge"

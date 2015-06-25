@@ -21,11 +21,15 @@ JEOL X-ray Map""",
       tests_require=['Nose'],
       install_requires=[
           # -*- Extra requirements: -*-
+            "PyYAML",
+            "numpy",
+            "PIL"          
       ],
       entry_points= {
             "console_scripts": [
                   "jxmap-image = jxmap.map2image:map2image",
                   "jxmap-info = jxmap.map2info:map2info",
+                  "u8raw = jxmap.u8raw:u8raw"
                   #"jxmap-raw = jxmap.commands:map2raw",
                   ]},
       )

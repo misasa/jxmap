@@ -9,17 +9,30 @@ from jxmap import __version__ as VERSION
 from jxmap import load_rpl, load_raw
 
 def u8raw():
-	# parser = OptionParser("usage: %prog [options] raw-file ...")
-	parser = OptionParser("""usage: %prog [options] raw-file ...
+	# parser = OptionParser("usage: %prog [options] rawfile ...")
+	parser = OptionParser("""usage: %prog [options] rawfile0 [rawfile1 ...]
 	SYNOPSIS AND USAGE
-	  python %prog [options] raw-file ...
+	  python %prog [options] rawfile0 [rawfile1 ...]
 
 	DESCRIPTION
+          Reduce size of mapfile by getting rid of lighter bits.  This
+          program converts raw mapfile (rawfile) produced by JXA-8530F
+          to unsinged 8-bit integer (char).  Raw mapfile can be float
+          32-bit or unsigned 16-bit integer.  This is useful when a
+          map is too large and consumes lots of memory.
 
 	EXAMPLE
+          DOS> ls
+          Al.raw  Al.rpl
+          DOS> python u8raw.py Al.raw
+          ...
+          DOS> ls
+          Al.raw  Al_u8.raw  Al_u8.rpl
 
 	SEE ALSO
+          python phase_analysis.py
 	  http://dream.misasa.okayama-u.ac.jp
+          http://www.nist.gov/lispix/
 
 	IMPLEMENTATION
 	  Orochi, version 9
@@ -27,6 +40,7 @@ def u8raw():
 	  License GPLv3+: GNU GPL version 3 or later
 
 	HISTORY
+          July 2, 2015: TK adds documentation
 	""")
 	parser.add_option("-v", "--verbose",
 	                  action="store_true", dest="verbose", default=False,

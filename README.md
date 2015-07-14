@@ -2,29 +2,29 @@
 
 Analyze mapfile craeted by EPMA
 
-## Dependency
+# Dependency
 
-### [pip](https://pip.pypa.io/en/latest/installing.html "download and DOS> python get-pip.py")
+## [pip](https://pip.pypa.io/en/latest/installing.html "download and DOS> python get-pip.py")
 
-### [numpy](http://sourceforge.net/projects/numpy/files/NumPy/ "download and launch installer")
+## [numpy](http://sourceforge.net/projects/numpy/files/NumPy/ "download and launch installer")
 
-### [scipy](http://sourceforge.net/projects/scipy/ "download and launch installer")
+## [scipy](http://sourceforge.net/projects/scipy/ "download and launch installer")
 
-### [pil](http://www.pythonware.com/products/pil/ "download and launch installer")
+## [pil](http://www.pythonware.com/products/pil/ "download and launch installer")
 
-### [matplotlib](http://matplotlib.org/ "download and launch installer")
+## [matplotlib](http://matplotlib.org/ "download and launch installer")
 
-## Installation
+# Installation
 
 Install it as Administrator by yourself as:
 
     DOS> pip install git+http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap.git
 
-Successful installation is confirmed as:
+Successful installation is confirmed by:
 
     DOS> jxmap-info -h
 
-## Commands
+# Commands
 
 Commands are summarized as:
 
@@ -35,7 +35,7 @@ Commands are summarized as:
 | jxmap-info     | Provide info for mapfile                       |      |
 
 
-## Usage
+# Usage
 
 See online document:
 

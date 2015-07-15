@@ -14,6 +14,13 @@ Analyze mapfile craeted by EPMA
 
 ## [matplotlib](http://matplotlib.org/ "download and launch installer")
 
+## [six](http://www.misasa.okayama-u.ac.jp "DOS> pip install six")
+
+## [dateutil](http://www.misasa.okayama-u.ac.jp "DOS> pip install python-dateutil")
+
+## [pyparsing](http://www.misasa.okayama-u.ac.jp "DOS> pip install pyparsing")
+
+
 # Installation
 
 Install it as Administrator by yourself as:

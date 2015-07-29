@@ -29,23 +29,21 @@ Install it as Administrator by yourself as:
 
 Successful installation is confirmed by:
 
-    DOS> jxmap-info -h
+    DOS> jxmap-info --help
 
 # Commands
 
 Commands are summarized as:
 
-| command        | description                                    | note |
-| -------------- | ---------------------------------------------- | ---- |
-| phase_analysis | Convert a phasefile to N-phase pseudocolor-map |      |
-| u8raw          | Reduce size of mapfile                         |      |
-| jxmap-info     | Provide info for mapfile                       |      |
+| command               | description                                               | note |
+| --------------------- | --------------------------------------------------------- | ---- |
+| jxmap-image           | No description available                                  |      |
+| jxmap-info            | Provide info for mapfile                                  |      |
+| phase-analysis-kmeans | Create phasefile with N phases using M input element-maps |      |
+| phase-map-creation    | Convert a phasefile to N-phase pseudocolor-map            |      |
+| u8raw                 | Reduce size of mapfile                                    |      |
 
 
 # Usage
 
-See online document:
-
-    DOS> phase_analysis --help
-    DOS> u8raw --help
-    DOS> jxmap-info --help
+See online document with option `--help`.

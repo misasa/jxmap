@@ -18,38 +18,38 @@ from jxmap import load_rpl, load_raw, load_pickle
 def map_create():
 	# parser = OptionParser("usage: %prog [options] name")
 	parser = OptionParser("""usage: %prog [options] phasefile
-	SYNOPSIS AND USAGE
-	  python %prog [options] phasefile
+SYNOPSIS AND USAGE
+  python %prog [options] phasefile
 
-	DESCRIPTION
-	  Convert a phasefile to N-phase pseudocolor-map.  By phases analysis
-	  using `phase-analysis-kmeans.py', you obtain phasefile
-	  `phases-N.pkl'.  This program generates N-phase pseudocolor-map
-	  *.raw accompanied with *.rpl and *.lisp to be loaded into LISPIX to
-	  have a visual.
+DESCRIPTION
+  Convert a phasefile to N-phase pseudocolor-map.  By phases analysis
+  using `phase-analysis-kmeans.py', you obtain phasefile
+  `phases-N.pkl'.  This program generates N-phase pseudocolor-map
+  *.raw accompanied with *.rpl and *.lisp to be loaded into LISPIX to
+  have a visual.
 
-	EXAMPLE
-	  DOS> python %prog phase-8.pkl
-	  DOS> dir
-	  ...
-	  phases-8.lisp
-	  phases-8.raw
-	  phases-8.rpl
-	  ...
+EXAMPLE
+  DOS> python %prog phase-8.pkl
+  DOS> dir
+  ...
+  phases-8.lisp
+  phases-8.raw
+  phases-8.rpl
+  ...
 
-	SEE ALSO
-	  phase-analysis-kmeans.py
-	  LISPIX <http://www.nist.gov/lispix>
-	  http://dream.misasa.okayama-u.ac.jp
+SEE ALSO
+  phase-analysis-kmeans.py
+  LISPIX <http://www.nist.gov/lispix>
+  http://dream.misasa.okayama-u.ac.jp
 
-	IMPLEMENTATION
-	  Orochi, version 9
-	  Copyright (C) 2014 Okayama University
-	  License GPLv3+: GNU GPL version 3 or later
+IMPLEMENTATION
+  Orochi, version 9
+  Copyright (C) 2014 Okayama University
+  License GPLv3+: GNU GPL version 3 or later
 
-	HISTORY
-	  May 24, 2015: TK add documentation
-	""")
+HISTORY
+  May 24, 2015: TK add documentation
+""")
 	parser.add_option("-v", "--verbose",
 	                  action="store_true", dest="verbose", default=False,
 	                  help="make lots of noise")

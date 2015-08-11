@@ -7,7 +7,25 @@ from jxmap import Jxmap
 
 def map2info():
 	prog = "jxmap-info"
-	parser = OptionParser(usage='usage: %prog [options] MAPFILE', version='%%prog %s' % VERSION)
+	parser = OptionParser(usage="""usage: %prog [options] MAPFILE,
+SYNOPSIS AND USAGE
+  %prog [options] MAPFILE
+
+DESCRIPTION
+
+EXAMPLE
+
+SEE ALSO
+  http://dream.misasa.okayama-u.ac.jp
+
+IMPLEMENTATION
+  Orochi, version 9
+  Copyright (C) 2014 Okayama University
+  License GPLv3+: GNU GPL version 3 or later
+
+HISTORY
+  August 11, 2015: add documentation""",
+        version='%%prog %s' % VERSION)
 	parser.add_option("-c", "--condition-file", type="string",
 		help='Specify condition file.'
 		)

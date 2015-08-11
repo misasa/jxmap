@@ -71,7 +71,25 @@ def get_x_separated_args(option, opt, value, parser):
 
 def _parse_options():
 	prog = "jxmap-image"
-	parser = OptionParser(usage='usage: %prog [options] MAPFILE IMAGEFILE', version='%%prog %s' % VERSION)
+	parser = OptionParser(usage="""usage: %prog [options] MAPFILE IMAGEFILE
+SYNOPSIS AND USAGE
+  %prog [options] MAPFILE IMAGEFILE
+
+DESCRIPTION
+
+EXAMPLE
+
+SEE ALSO
+  http://dream.misasa.okayama-u.ac.jp
+
+IMPLEMENTATION
+  Orochi, version 9
+  Copyright (C) 2014 Okayama University
+  License GPLv3+: GNU GPL version 3 or later
+
+HISTORY
+  August 11, 2015: add documentation""",
+        version='%%prog %s' % VERSION)
 	parser.add_option("-g", "--geometry", type="string", action='callback', callback=get_x_separated_args,
 		help='Specify "X-STEP-NUMBERxY-STEP-NUMBER".', dest="step_numbers"
 		)

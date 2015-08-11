@@ -7,7 +7,8 @@ from jxmap import Jxmap
 
 def map2info():
 	prog = "jxmap-info"
-	parser = OptionParser(usage="""usage: %prog [options] MAPFILE,
+	parser = OptionParser(usage="""usage: %prog [options] MAPFILE
+
 SYNOPSIS AND USAGE
   %prog [options] MAPFILE
 

@@ -11,6 +11,7 @@ from jxmap import load_rpl, load_raw
 def u8raw():
 	# parser = OptionParser("usage: %prog [options] rawfile ...")
 	parser = OptionParser("""usage: %prog [options] rawfile0 [rawfile1 ...]
+
 SYNOPSIS AND USAGE
   python %prog [options] rawfile0 [rawfile1 ...]
 

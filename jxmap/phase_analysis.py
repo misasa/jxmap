@@ -18,6 +18,7 @@ from jxmap import load_rpl, load_raw, load_pickle
 def map_create():
 	# parser = OptionParser("usage: %prog [options] name")
 	parser = OptionParser("""usage: %prog [options] phasefile
+
 SYNOPSIS AND USAGE
   python %prog [options] phasefile
 
@@ -95,35 +96,36 @@ HISTORY
 def phase_analysis_kmeans():
 	# parser = OptionParser("usage: %prog [options] image ...")
 	parser = OptionParser("""usage: %prog [options] map0 map1 map2 [... mapM]
-	SYNOPSIS AND USAGE
-	  python %prog [options] image0 image1 image2 [... imageM]
 
-	DESCRIPTION
-	  Create phasefile with N phases using M input element-maps.  Prepare
-	  M input element-maps, that are *.raw accompanied with *.rpl.  This
-	  program creates a phasefile with N phases `pnases-N.pkl'.  Call
-	  `phase-map-creation.py' subsequently to have N-phase pseudocolor-map
-	  *.raw and *.rpl.
+SYNOPSIS AND USAGE
+  python %prog [options] image0 image1 image2 [... imageM]
 
-	EXAMPLE
-	  DOS> python %prog -n 8 Al.raw CP.raw Ca.raw Cl.raw Cr.raw Fe.raw Mg.raw Mn.raw Na.raw Ni.raw Si.raw Ti.raw
-	  DOS> dir
-	  ...
-	  phases-8.pkl
-	  ...
+DESCRIPTION
+  Create phasefile with N phases using M input element-maps.  Prepare
+  M input element-maps, that are *.raw accompanied with *.rpl.  This
+  program creates a phasefile with N phases `pnases-N.pkl'.  Call
+  `phase-map-creation.py' subsequently to have N-phase pseudocolor-map
+  *.raw and *.rpl.
 
-	SEE ALSO
-	  phase-map-creation.py
-	  http://dream.misasa.okayama-u.ac.jp
+EXAMPLE
+  DOS> python %prog -n 8 Al.raw CP.raw Ca.raw Cl.raw Cr.raw Fe.raw Mg.raw Mn.raw Na.raw Ni.raw Si.raw Ti.raw
+  DOS> dir
+  ...
+  phases-8.pkl
+  ...
 
-	IMPLEMENTATION
-	  Orochi, version 9
-	  Copyright (C) 2014 Okayama University
-	  License GPLv3+: GNU GPL version 3 or later
+SEE ALSO
+  phase-map-creation.py
+  http://dream.misasa.okayama-u.ac.jp
 
-	HISTORY
-	  May 24, 2015: TK add documentation
-	""")
+IMPLEMENTATION
+  Orochi, version 9
+  Copyright (C) 2014 Okayama University
+  License GPLv3+: GNU GPL version 3 or later
+
+HISTORY
+  May 24, 2015: TK add documentation
+""")
 	parser.add_option("-v", "--verbose",
 	                  action="store_true", dest="verbose", default=False,
 	                  help="make lots of noise")

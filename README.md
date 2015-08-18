@@ -1,6 +1,6 @@
 # jxmap
 
-Analyze mapfile craeted by EPMA
+Analyze mapfile created by EPMA
 
 # Dependency
 

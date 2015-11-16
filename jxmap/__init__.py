@@ -8,7 +8,7 @@ import pickle
 import matplotlib
 import PIL
 
-__version__ = '0.0.7'
+__version__ = '0.0.8'
 
 def byteorder(rpl):
 	o = ""
@@ -320,9 +320,23 @@ class Jxmap(object):
 			dic['signal'] = m.group(2)
 			vals = m.group(2).split('_')
 			dic['element_name'] = vals[0]
-			dic['channel_name'] = vals[1]
-			dic['crystal_name'] = vals[2]
-			dic['x_ray_name'] = vals[3]
+			if len(vals) > 1:
+				dic['channel_name'] = vals[1]
+			if len(vals) > 2:
+				dic['crystal_name'] = vals[2]
+			if len(vals) > 3:
+				dic['x_ray_name'] = vals[3]
+
+		m = re.search(r'\$XM_ELEM_WDS_CRYSTAL_NAME%(\d+) (\S+)', buffer)
+		if m:
+			dic['crystal_name'] = m.group(2)
+
+
+		m = re.search(r'\$XM_ELEM_WDS_XRAY%(\d+) (\S+)', buffer)
+		if m:
+			dic['x_ray_name'] = m.group(2)
+
+
 		m = re.search(r'\$XM_ELEM_IMS_SIGNAL_TYPE%(\d+) (\S+)', buffer)
 		if m:
 			dic['signal'] = m.group(2)

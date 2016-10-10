@@ -4,6 +4,10 @@ Analyze mapfile created by EPMA
 
 # Dependency
 
+## [python 2.7](https://www.python.org/downloads/)
+
+Include C:\Python27\;C:\Python27\Scripts\ in %PATH%.
+
 ## [pip](https://pip.pypa.io/en/latest/installing.html "download and DOS> python get-pip.py")
 
 ## [numpy](http://sourceforge.net/projects/numpy/files/NumPy/ "download and launch installer")

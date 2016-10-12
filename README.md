@@ -1,6 +1,10 @@
 # jxmap
 
-Analyze mapfile created by EPMA
+Convert a map file created by JEOL's EPMA to a tiff file.  This
+package is called from EMPA-archivers as listed as below.
+
+## [EMPA-archivers for JXA-8530F](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/epma_archiver)
+## [EMPA-archivers for JXA-8800](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/jxa)
 
 # Dependency
 

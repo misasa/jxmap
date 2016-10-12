@@ -43,13 +43,13 @@ Successful installation is confirmed by:
 
 Commands are summarized as:
 
-| command               | description                                               | note |
-| --------------------- | --------------------------------------------------------- | ---- |
-| jxmap-image           | No description available                                  |      |
-| jxmap-info            | Provide info for mapfile                                  |      |
-| phase-analysis-kmeans | Create phasefile with N phases using M input element-maps |      |
-| phase-map-creation    | Convert a phasefile to N-phase pseudocolor-map            |      |
-| u8raw                 | Reduce size of mapfile                                    |      |
+| command               | description                                                 | note |
+| --------------------- | ----------------------------------------------------------- | ---- |
+| jxmap-image           | No description available                                    |      |
+| jxmap-info            | Read pseudo imajeoletry and export to imageometry to stdout |      |
+| phase-analysis-kmeans | Create phasefile with N phases using M input element-maps   |      |
+| phase-map-creation    | Convert a phasefile to N-phase pseudocolor-map              |      |
+| u8raw                 | Reduce size of mapfile                                      |      |
 
 
 # Usage

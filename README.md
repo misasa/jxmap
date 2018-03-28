@@ -31,13 +31,17 @@ Include C:\Python27\;C:\Python27\Scripts\ in %PATH%.
 
 # Installation
 
-Install it as Administrator by yourself as:
+Install it as Administrator as:
 
-    DOS> pip install git+http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap.git
+    ADMIN.CMD> pip install git+http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap.git
+
+Or download [jxmap-xxxyyyzzz.zip](http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
+
+    ADMIN.CMD> pip install jxmap-c18fb69e5c558269b4c0285d77b9b12708f37424
 
 Successful installation is confirmed by:
 
-    DOS> jxmap-info --help
+    CMD> jxmap-info --help
 
 # Commands
 

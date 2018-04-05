@@ -1,7 +1,6 @@
 # jxmap
 
-Convert a map file created by JEOL's EPMA to a tiff file.  This
-package is called from EMPA-archivers as listed as below.
+Convert a map file created by JEOL's EPMA to a tiff file.  This package is called from EMPA achievers as listed as below.
 
 ## [EMPA-archiver for JXA-8530F](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/epma_archiver)
 ## [EMPA-archiver for JXA-8800](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/jxa)
@@ -10,7 +9,7 @@ package is called from EMPA-archivers as listed as below.
 
 ## [python 2.7](https://www.python.org/downloads/)
 
-Include C:\Python27\;C:\Python27\Scripts\ in %PATH%.
+When install Python for MS Windows, do not forget to include `C:\Python27\;C:\Python27\Scripts\` in %PATH%.
 
 ## [pip](https://pip.pypa.io/en/latest/installing.html "download and DOS> python get-pip.py")
 

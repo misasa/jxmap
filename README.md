@@ -1,9 +1,9 @@
-# jxmap
+# python package -- jxmap
 
 Convert a map file created by JEOL's EPMA to a tiff file.  This package is called from EMPA achievers as listed as below.
 
-## [EMPA-archiver for JXA-8530F](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/epma_archiver)
-## [EMPA-archiver for JXA-8800](http://devel.misasa.okayama-u.ac.jp/gitlab/rails/jxa)
+## [EMPA-archiver for JXA-8530F](http://babel.misasa.okayama-u.ac.jp/rails/epma_archiver)
+## [EMPA-archiver for JXA-8800](http://babel.misasa.okayama-u.ac.jp/rails/jxa)
 
 # Dependency
 
@@ -32,9 +32,9 @@ When install Python for MS Windows, do not forget to include `C:\Python27\;C:\Py
 
 Install it as Administrator as:
 
-    ADMIN.CMD> pip install git+http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap.git
+    ADMIN.CMD> pip install git+http://babel.misasa.okayama-u.ac.jp/pythonpackage/jxmap.git
 
-Or download [jxmap-xxxyyyzzz.zip](http://devel.misasa.okayama-u.ac.jp/gitlab/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
+Or download [jxmap-xxxyyyzzz.zip](http://babel.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
 
     ADMIN.CMD> pip install jxmap-c18fb69e5c558269b4c0285d77b9b12708f37424.zip
 

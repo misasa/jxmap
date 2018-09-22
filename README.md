@@ -1,9 +1,11 @@
 # python package -- jxmap
 
-Convert a map file created by JEOL's EPMA to a tiff file.  This package is called from EMPA achievers as listed as below.
+Convert a map file created by JEOL's EPMA to a tiff file.
 
-## [EMPA-archiver for JXA-8530F](http://babel.misasa.okayama-u.ac.jp/rails/epma_archiver)
-## [EMPA-archiver for JXA-8800](http://babel.misasa.okayama-u.ac.jp/rails/jxa)
+See
+[EMPA-archiver for JXA-8530F](http://babel.misasa.okayama-u.ac.jp/rails/epma_archiver)
+[EMPA-archiver for JXA-8800](http://babel.misasa.okayama-u.ac.jp/rails/jxa)
+that refer to this package.
 
 # Dependency
 

@@ -3,8 +3,8 @@
 Convert a map file created by JEOL's EPMA to a tiff file.
 
 See
-[EMPA-archiver for JXA-8530F](http://babel.misasa.okayama-u.ac.jp/rails/epma_archiver)
-[EMPA-archiver for JXA-8800](http://babel.misasa.okayama-u.ac.jp/rails/jxa)
+[EMPA-archiver for JXA-8530F](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
+[EMPA-archiver for JXA-8800](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
 that refer to this package.
 
 # Dependency
@@ -23,20 +23,20 @@ When install Python for MS Windows, do not forget to include `C:\Python27\;C:\Py
 
 ## [matplotlib](http://matplotlib.org/ "download and launch installer")
 
-## [six](http://www.misasa.okayama-u.ac.jp "DOS> pip install six")
+## [six](http://www.misasa.okayama-u.ac.jp "CMD> pip install six")
 
-## [dateutil](http://www.misasa.okayama-u.ac.jp "DOS> pip install python-dateutil")
+## [dateutil](http://www.misasa.okayama-u.ac.jp "CMD> pip install python-dateutil")
 
-## [pyparsing](http://www.misasa.okayama-u.ac.jp "DOS> pip install pyparsing")
+## [pyparsing](http://www.misasa.okayama-u.ac.jp "CMD> pip install pyparsing")
 
 
 # Installation
 
 Install it as Administrator as:
 
-    ADMIN.CMD> pip install git+http://babel.misasa.okayama-u.ac.jp/pythonpackage/jxmap.git
+    ADMIN.CMD> pip install git+http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap.git
 
-Or download [jxmap-xxxyyyzzz.zip](http://babel.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
+Or download [jxmap-xxxyyyzzz.zip](http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
 
     ADMIN.CMD> pip install jxmap-c18fb69e5c558269b4c0285d77b9b12708f37424.zip
 

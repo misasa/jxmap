@@ -15,7 +15,7 @@ that refer to this package.
 
 ## [Python 2.7 for Windows](https://www.python.org/downloads/windows/)
 
-When install Python for MS Windows, do not forget to include `C:\Python27\;C:\Python27\Scripts\` in %PATH%.
+Include "C:\Python27\;C:\Python27\Scripts\" to %PATH%.
 
 ## [numpy](http://sourceforge.net/projects/numpy/files/NumPy/ "download and launch installer")
 

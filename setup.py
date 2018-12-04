@@ -29,7 +29,8 @@ JEOL X-ray Map""",
             "pytz", 
             "pyparsing", 
             "six",
-            "scipy",         
+            "scipy",
+            "dateutil",
       ],
       entry_points= {
             "console_scripts": [

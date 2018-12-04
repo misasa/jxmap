@@ -13,7 +13,7 @@ that refer to this package.
 
 # Dependency
 
-## [python 2.7](https://www.python.org/downloads/)
+## [Python 2.7 for Windows](https://www.python.org/downloads/windows/)
 
 When install Python for MS Windows, do not forget to include `C:\Python27\;C:\Python27\Scripts\` in %PATH%.
 
@@ -38,9 +38,11 @@ Install it as Administrator as:
 
     ADMIN.CMD> pip install git+http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap.git
 
-Or download [jxmap-xxxyyyzzz.zip](http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to local directory and install it as Administrator as:
+Or download [archive.zip](http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to a local directory and install it as Administrator as:
 
-    ADMIN.CMD> pip install jxmap-c18fb69e5c558269b4c0285d77b9b12708f37424.zip
+    ADMIN.CMD> pip list
+    $ wget http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip
+    ADMIN.CMD> pip install archive.zip
 
 Successful installation is confirmed by:
 

@@ -21,15 +21,9 @@ Include "C:\Python27\;C:\Python27\Scripts\" to %PATH%.
 
 ## [scipy](http://sourceforge.net/projects/scipy/ "download and launch installer")
 
-## [pil](http://www.pythonware.com/products/pil/ "download and launch installer")
-
 ## [matplotlib](http://matplotlib.org/ "download and launch installer")
 
-## [six](http://www.misasa.okayama-u.ac.jp "CMD> pip install six")
-
 ## [dateutil](http://www.misasa.okayama-u.ac.jp "CMD> pip install python-dateutil")
-
-## [pyparsing](http://www.misasa.okayama-u.ac.jp "CMD> pip install pyparsing")
 
 
 # Installation

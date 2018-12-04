@@ -23,9 +23,6 @@ Include "C:\Python27\;C:\Python27\Scripts\" to %PATH%.
 
 ## [matplotlib](http://matplotlib.org/ "download and launch installer")
 
-## [dateutil](http://www.misasa.okayama-u.ac.jp "CMD> pip install python-dateutil")
-
-
 # Installation
 
 Install it as Administrator as:

@@ -17,8 +17,6 @@ that refer to this package.
 
 Include "C:\Python27\;C:\Python27\Scripts\" to %PATH%.
 
-## [numpy](http://sourceforge.net/projects/numpy/files/NumPy/ "download and launch installer")
-
 ## [scipy](http://sourceforge.net/projects/scipy/ "download and launch installer")
 
 ## [matplotlib](http://matplotlib.org/ "download and launch installer")

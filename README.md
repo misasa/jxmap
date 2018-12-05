@@ -10,12 +10,6 @@ and
 [rails project -- jxa](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
 that refer to this package.
 
-See
-[EMPA-archiver for JXA-8530F](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
-and
-[EMPA-archiver for JXA-8800](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
-that refer to this package.
-
 # Dependency
 
 ## [Python 2.7 for Windows](https://www.python.org/downloads/windows/)

@@ -16,9 +16,9 @@ that refers to this package.
 
 Include "C:\Python27\;C:\Python27\Scripts\" to %PATH%.
 
-## [matplotlib](http://matplotlib.org/ "download and launch installer")
+## [matplotlib](http://matplotlib.org/ "When your computer is without development environment, download and launch installer.")
 
-## [scipy](http://sourceforge.net/projects/scipy/ "download and launch installer")
+## [scipy](http://sourceforge.net/projects/scipy/ "When your computer is without development environment, download and launch installer.")
 
 # Installation
 
@@ -28,8 +28,10 @@ Install it as Administrator as:
 
 Or download [archive.zip](http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip) to a local directory and install it as Administrator as:
 
-    ADMIN.CMD> pip list
+    $ cd ~/Downloads/
     $ wget http://gitlab.misasa.okayama-u.ac.jp/pythonpackage/jxmap/repository/archive.zip
+    ADMIN.CMD> cd %USERPROFILE%\Downloads
+    ADMIN.CMD> pip list
     ADMIN.CMD> pip install archive.zip
 
 Successful installation is confirmed by:

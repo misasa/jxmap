@@ -6,9 +6,9 @@ Map files created by JEOL's EPMA are with extention '.map'.  This package also o
 a program that identifies phases using an algorithm k-mean.
 
 See [rails project -- epma_archiver](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
-and
-[rails project -- jxa](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
-that refer to this package.
+that refers to this package.
+See [rails project -- jxa](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
+that refers to this package.
 
 # Dependency
 

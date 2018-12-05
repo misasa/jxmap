@@ -5,6 +5,10 @@ Convert a map file created by JEOL's EPMA to a tiff file.
 Map files created by JEOL's EPMA are with extention '.map'.  This package also offers
 a program that identifies phases using an algorithm k-mean.
 
+See [rails project -- epma_archiver](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
+and
+[rails project -- epma_archiver](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa).
+
 See
 [EMPA-archiver for JXA-8530F](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
 and

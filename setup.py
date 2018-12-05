@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-from jxmap import __version__ as VERSION
+from jxmap._version import __version__ as VERSION
 
 setup(name='jxmap',
       version=VERSION,

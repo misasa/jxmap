@@ -8,8 +8,6 @@ import pickle
 import matplotlib
 import PIL
 
-__version__ = '0.0.8'
-
 def byteorder(rpl):
 	o = ""
 	if rpl["byte-order"] == "big-endian":

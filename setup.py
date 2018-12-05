@@ -31,6 +31,7 @@ JEOL X-ray Map""",
             "six",
             "scipy",
             "dateutil",
+            "matplotlib",
       ],
       entry_points= {
             "console_scripts": [

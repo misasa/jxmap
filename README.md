@@ -11,7 +11,7 @@ that refers to this package.
 See [rails project -- jxa](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
 that refers to this package.
 
-This project took over [rake project -- jxa1](https://gitlab.misasa.okayama-u.ac.jp/Hydra/jxa1) from 2012-12.
+This project took over rake project -- jxa1 from 2012-12.
 
 # Dependency
 

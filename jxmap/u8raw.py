@@ -5,7 +5,8 @@ import numpy
 from optparse import OptionParser
 #sys.path.insert(0, os.path.dirname( os.path.abspath( __file__ ) ) + "/../lib")
 #import mylib
-from jxmap import __version__ as VERSION
+#from jxmap import __version__ as VERSION
+from jxmap._version import __version__ as VERSION
 from jxmap import load_rpl, load_raw
 
 def u8raw():

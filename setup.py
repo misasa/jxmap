@@ -23,14 +23,14 @@ JEOL X-ray Map""",
       install_requires=[
           # -*- Extra requirements: -*-
             "PyYAML",
-            "PIL",
+            "Pillow",
             "numpy",
             "python-dateutil",
             "pytz", 
             "pyparsing", 
             "six",
             "scipy",
-            "dateutil",
+#            "dateutil",
             "matplotlib",
       ],
       entry_points= {

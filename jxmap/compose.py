@@ -2,7 +2,8 @@ import sys
 import os
 import yaml
 from optparse import OptionParser
-from jxmap import __version__ as VERSION
+#from jxmap import __version__ as VERSION
+from jxmap._version import __version__ as VERSION
 from jxmap import Jxmap
 
 def compose():

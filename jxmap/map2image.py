@@ -4,9 +4,10 @@ import numpy
 import re
 import yaml
 #from cv2 import cv
-import Image
+from PIL import Image
 from optparse import OptionParser
-from jxmap import __version__ as VERSION
+#from jxmap import __version__ as VERSION
+from jxmap._version import __version__ as VERSION
 from jxmap import Jxmap
 
 def map2image():

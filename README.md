@@ -6,12 +6,8 @@ Datasets of area analyses using JEOL's EPMA are stored in file with extention '.
 A program by this package reads '.map' file and writes '.tiff' file.
 Also, a program by this package identifies phases using algorithm k-mean.
 
-See [rails project -- epma_archiver](http://gitlab.misasa.okayama-u.ac.jp/rails/epma_archiver)
+See [rails project -- epma_archiver](http://github.com/misasa/epma_archiver)
 that refers to this package.
-See [rails project -- jxa](http://gitlab.misasa.okayama-u.ac.jp/rails/jxa)
-that refers to this package.
-
-This project took over rake project -- jxa1 from 2012-12.
 
 # Dependency
 
